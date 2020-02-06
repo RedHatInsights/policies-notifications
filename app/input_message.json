@@ -1,0 +1,19 @@
+{'action':
+ {'tenantId': 'tutorial', 'actionPlugin': 'email', 'actionId': 'notify-notification-service', 'global': False,
+  'properties': {'cc': '', 'from': '', 'to': 'somewhere@rainbow.com'},
+  'eventId': 'detect-floating-2-1580819082000-42feaf60-962c-4335-b409-0538570eef1d',
+  'ctime': 1580819082001,
+  'event': {'eventType': 'ALERT', 'tenantId': 'tutorial', 'id': 'detect-floating-2-1580819082000-42feaf60-962c-4335-b409-0538570eef1d', 'ctime': 1580819082000, 'dataSource': '_none_', 'dataId': 'detect-floating-2', 'category': 'ALERT', 'text': 'These hosts are not allocated to any known infrastructure provider', 'tags': {'demo': 'new'},
+	    'trigger': {'tenantId': 'tutorial', 'id': 'detect-floating-2', 'name': 'Node with no infra', 'description': 'These hosts are not allocated to any known infrastructure provider', 'type': 'STANDARD', 'eventType': 'ALERT', 'eventCategory': None, 'eventText': None, 'severity': 'MEDIUM', 'tags': {'demo': 'new'},
+			'actions': [{'tenantId': 'tutorial', 'actionPlugin': 'email', 'actionId': 'notify-notification-service'}],
+			'autoDisable': False, 'autoEnable': False, 'autoResolve': False, 'autoResolveAlerts': True, 'autoResolveMatch': 'ALL', 'enabled': True, 'firingMatch': 'ALL', 'source': '_none_'
+		       },
+	    'dampening': {'tenantId': 'tutorial', 'triggerId': 'detect-floating-2', 'triggerMode': 'FIRING', 'type': 'STRICT', 'evalTrueSetting': 1, 'evalTotalSetting': 1, 'evalTimeSetting': 0, 'dampeningId': 'tutorial-detect-floating-2-FIRING'},
+	    'evalSets': [[{'evalTimestamp': 1580819081999, 'dataTimestamp': 1580819080127, 'type': 'EVENT', 'context': {'infrastructure_vendor': 'string', 'rhel_machine_id': '3f01b55457674041b75e41829bcee1dc'},
+			   'displayString': 'Event: insight_report[Event [tenantId=tutorial, id=14, ctime=1580819080127, category=insight_report, dataId=insight_report, dataSource=_none_, text=just another report which needs a name, context={infrastructure_vendor=string, rhel_machine_id=3f01b55457674041b75e41829bcee1dc}, tags={subscription_manager_id=3f01b55457674041b75e41829bcee1dc, ansible_host=host1.mydomain.com, satellite_id=3f01b55457674041b75e41829bcee1dc}, trigger=null]] matches [null]',
+			   'condition': {'tenantId': 'tutorial', 'triggerId': 'detect-floating-2', 'triggerMode': 'FIRING', 'type': 'EVENT', 'conditionSetSize': 1, 'conditionSetIndex': 1, 'conditionId': 'tutorial-detect-floating-2-FIRING-1-1', 'displayString': 'insight_report matches [null]', 'dataId': 'insight_report', 'expression': None}, 'value': {'eventType': 'EVENT', 'tenantId': 'tutorial', 'id': '14', 'ctime': 1580819080127, 'dataSource': '_none_', 'dataId': 'insight_report', 'category': 'insight_report', 'text': 'just another report which needs a name', 'context': {'infrastructure_vendor': 'string', 'rhel_machine_id': '3f01b55457674041b75e41829bcee1dc'}, 'tags': {'subscription_manager_id': '3f01b55457674041b75e41829bcee1dc', 'ansible_host': 'host1.mydomain.com', 'satellite_id': '3f01b55457674041b75e41829bcee1dc'}}}]],
+	    'severity': 'MEDIUM', 'status': 'OPEN',
+	    'lifecycle': [{'status': 'OPEN', 'user': 'system', 'stime': 1580819082000}]
+	   }
+ }
+}

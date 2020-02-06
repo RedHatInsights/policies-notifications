@@ -1,0 +1,20 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pylint = "*"
+autopep8 = "*"
+
+[packages]
+fastapi = "*"
+uvicorn = "*"
+aiohttp = {extras = ["speedups"],version = "*"}
+asyncpg = "*"
+gino = "*"
+aiokafka = "*"
+jinja2 = "*"
+
+[requires]
+python_version = "3.8"

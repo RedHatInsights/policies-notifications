@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Custom Policy Notification</title>
+</head>
+<body>
+    <p>Hi Jerome,</p>
+    <p>&nbsp;</p>
+    <p>Your {{ tags.display_name }} system was identified as a match for the following Custom Policies:</p>
+    <ul id="navigation">
+    {% for item in triggerNames %}
+        <li>{{ item }}</li>
+    {% endfor %}
+    </ul>
+    <p>You are receiving this email because you are subscribed to Email Notifications for your account.</p>
+</body>
+</html>
