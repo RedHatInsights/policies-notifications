@@ -4,6 +4,7 @@ import asyncio
 from aiokafka import AIOKafkaConsumer
 
 from .models import Action
+from ..core.config import KAFKA_BOOTSTRAP_SERVERS, KAFKA_QUEUE_HOOK
 
 
 class EventConsumer:
@@ -11,7 +12,7 @@ class EventConsumer:
     def __init__(self):
         loop = asyncio.get_event_loop()
         self.consumer = AIOKafkaConsumer(
-            'hooks', loop=loop, bootstrap_servers='localhost:9092',
+            KAFKA_QUEUE_HOOK, loop=loop, bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
             group_id="notifications", value_deserializer=lambda m: json.loads(m.decode('utf-8')))
         self._running = False
 

@@ -6,6 +6,7 @@ from aiokafka import AIOKafkaConsumer
 
 from .models import Notification
 from ..email.process import EmailProcessor
+from ..core.config import KAFKA_BOOTSTRAP_SERVERS, KAFKA_QUEUE_EMAIL
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +16,7 @@ class EmailSubscriptionConsumer:
         self.logger = logging.getLogger(__name__)
         loop = asyncio.get_event_loop()
         self.consumer = AIOKafkaConsumer(
-            'platform.custom-policies.actions-email', loop=loop, bootstrap_servers='localhost:9092',
+            KAFKA_QUEUE_EMAIL, loop=loop, bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
             value_deserializer=lambda m: json.loads(m.decode('utf-8')), group_id='notifications',
             enable_auto_commit=False)
         self._running = False

@@ -5,15 +5,15 @@ import aiohttp
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 
+from ..core.config import BOP_URL, BOP_APITOKEN, BOP_CLIENT_ID
+
 logger = logging.getLogger(__name__)
 
 
 class BopSender:
 
     def __init__(self) -> None:
-        self.url = ''
-        apitoken = ''
-        headers = {"x-rh-apitoken": apitoken}
+        headers = {"x-rh-apitoken": BOP_APITOKEN}
         self.session = aiohttp.ClientSession(headers=headers)
 
     async def send_email(self, payload, receivers):
@@ -34,7 +34,7 @@ class BopSender:
         json_payload = jsonable_encoder(emails)
 
         logger.info('Request: %s', json_payload)
-        # await self.session.post(self.url, json=json_payload)
+        await self.session.post(BOP_URL, json=json_payload)
 
     async def shutdown(self):
         await self.session.close()
