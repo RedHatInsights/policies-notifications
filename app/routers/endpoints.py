@@ -19,13 +19,16 @@ async def get_endpoints():
 async def create_endpoint(endpoint: Endpoint):
     await endpoint_db.create_endpoint(account_id='default', endpoint=endpoint)
 
+
 @endpoints.put("/endpoints/email/subscription/{customer_id}/{event_type}")
 async def subscribe_email_endpoint(customer_id: str, event_type: str):
     pass
 
+
 @endpoints.delete("/endpoints/email/subscription/{customer_id}/{event_type}")
 async def unsubscribe_email_endpoint(customer_id: str, event_type: str):
     pass
+
 
 @endpoints.get("/endpoints/{id}", response_model=EndpointOut)
 async def get_endpoint(id: str):
@@ -40,4 +43,3 @@ async def delete_endpoint(id: str):
 @endpoints.put("/endpoints/{id}")
 async def update_endpoint(id: str, endpoint: Endpoint):
     pass
-

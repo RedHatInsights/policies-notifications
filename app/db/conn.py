@@ -1,10 +1,12 @@
 from gino import Gino
 
+from ..core.config import DATABASE_URL
+
 db = Gino()
 
 
 async def setup():
-    await db.set_bind('postgres://hook:addme@192.168.1.139/hook')
+    await db.set_bind(str(DATABASE_URL))
 
 
 async def shutdown():

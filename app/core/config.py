@@ -1,14 +1,8 @@
-import configparser
-
+from starlette.config import Config
+from starlette.datastructures import URL
 
 # Parse configuration file here, make some methods to return certain info..
 
-# Allow setting config filename instead of some default?
-# Allow environment variables to override values?
+config = Config('.env')
 
-class Config():
-    def __init__(self):
-        pass
-
-    def get_db_url(self):
-        pass
+DATABASE_URL = config('DATABASE_URL', cast=URL)
