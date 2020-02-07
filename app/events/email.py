@@ -37,7 +37,9 @@ class EmailSubscriptionConsumer:
 
     async def consume(self):
         logger.info('Started consuming messages..')
-        # TODO Surround with try / finally
+        # TODO Surround with try / finally, otherwise errors will crash the consumer
+        # TODO What to do with errors? Such as when BOP service is down. Not commit and simply ignore a while?
+        #      What about other type of errors, such as theoretical broken JSON? Or missing values otherwise
         async for msg in self.consumer:
             notification: Notification = Notification(**msg.value)
             self.logger.info('Received msg from Kafka: %s', notification.dict())

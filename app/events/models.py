@@ -1,4 +1,4 @@
-from typing import Mapping, Set
+from typing import Mapping, List
 
 from pydantic import BaseModel
 
@@ -31,4 +31,4 @@ class Action(BaseModel):
 class Notification(BaseModel):
     tenantId: str
     tags: Mapping[str, str]
-    triggerNames: Set[str]
+    triggerNames: List[str]

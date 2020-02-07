@@ -1,4 +1,4 @@
-from typing import List, Set
+from typing import List
 import logging
 
 import aiohttp
@@ -16,15 +16,18 @@ class BopSender:
         headers = {"x-rh-apitoken": apitoken}
         self.session = aiohttp.ClientSession(headers=headers)
 
-    async def send_email(self, payload, *receivers):
+    async def send_email(self, payload, receivers):
         email_set: List[Email] = []
         for r in receivers:
             email: Email = Email(
                 subject='Custom Policy Notification',
                 bodyType='html',
-                recipients={r},
+                recipients=[r],
                 body=payload)
             email_set.append(email)
+
+        if len(email_set) < 1:
+            return
 
         emails: Emails = Emails(emails=email_set)
 
@@ -40,7 +43,7 @@ class BopSender:
 class Email(BaseModel):
     subject: str
     body: str
-    recipients: Set[str]
+    recipients: List[str]
     bodyType: str
 
 

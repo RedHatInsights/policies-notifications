@@ -1,5 +1,5 @@
 from sqlalchemy import func, text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 
 from .conn import db
 
@@ -37,6 +37,14 @@ class WebhookEndpoint(db.Model):
 
 class EmailSubscription(db.Model):
     __tablename__ = 'endpoint_email_subscriptions'
-    account_id = db.Column(UUID, nullable=False, primary_key=True),
-    user_id = db.Column(db.String(50), nullable=False, primary_key=True),
+    account_id = db.Column(db.String(50), nullable=False, primary_key=True)
+    user_id = db.Column(db.String(50), nullable=False, primary_key=True)
     event_type = db.Column(db.String(50), nullable=False, primary_key=True)
+
+
+class EmailAggregation(db.Model):
+    __tablename__ = 'email_aggregation'
+    id = db.Column(db.Integer(), primary_key=True)
+    account_id = db.Column(db.String(50), nullable=False)
+    created = db.Column(db.DateTime, default=func.now())
+    payload = db.Column(JSONB, nullable=False)

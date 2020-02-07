@@ -7,7 +7,7 @@ Create Date: 2020-01-29 15:55:07.880970
 """
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.sql import func
 
 # revision identifiers, used by Alembic.
@@ -23,7 +23,7 @@ def upgrade():
         sa.Column('id', UUID(), primary_key=True, server_default=sa.text("gen_random_uuid()")),
         sa.Column('name', sa.String(255), nullable=False),
         sa.Column('description', sa.Unicode(), nullable=True),
-        sa.Column('created', sa.DateTime(timezone=True), server_default=func.now()),
+        sa.Column('created', sa.DateTime(timezone=True), server_default=func.now(), nullable=False),
         sa.Column('updated', sa.DateTime(timezone=True), onupdate=func.now())
     )
 
@@ -35,7 +35,7 @@ def upgrade():
         sa.Column('enabled', sa.Boolean(), nullable=False, default=False),
         sa.Column('name', sa.String(255), nullable=False),
         sa.Column('description', sa.Unicode(), nullable=True),
-        sa.Column('created', sa.DateTime(timezone=True), server_default=func.now()),
+        sa.Column('created', sa.DateTime(timezone=True), server_default=func.now(), nullable=False),
         sa.Column('updated', sa.DateTime(timezone=True), onupdate=func.now())
     )
 
@@ -50,10 +50,20 @@ def upgrade():
 
     op.create_table(
         'endpoint_email_subscriptions',
-        sa.Column('account_id', UUID(), nullable=False, primary_key=True),
+        sa.Column('account_id', sa.String(50), nullable=False, primary_key=True),
         sa.Column('user_id', sa.String(50), nullable=False, primary_key=True),
         sa.Column('event_type', sa.String(50), nullable=False, primary_key=True)
         # sa.UniqueConstraint('account_id', 'user_id', 'event_type', name='unique_subscription_IX')
+    )
+
+    op.create_table(
+        'email_aggregation',
+        sa.Column('id', sa.Integer(), primary_key=True),
+        sa.Column('account_id', sa.String(50), nullable=False),
+        sa.Column('created', sa.DateTime(timezone=True), server_default=func.now(), nullable=False),
+        sa.Column('payload', JSONB, nullable=False),
+        #     Needs to be an index of account_id + created as that's the search query
+        sa.Index('IX_time_search_account_mails', 'account_id', 'created')
     )
 
 
@@ -62,3 +72,4 @@ def downgrade():
     op.drop_table('endpoints')
     op.drop_table('endpoint_webhooks')
     op.drop_table('endpoint_email_subscriptions')
+    op.drop_table('email_aggregation')
