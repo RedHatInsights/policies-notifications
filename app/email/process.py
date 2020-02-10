@@ -22,4 +22,10 @@ class EmailProcessor:
         email = await self.rendering.render(self.render_template, notification.dict())
 
         subscribers = await subscriptions.get_subscribers(account_id, 'instant_mail')
-        await self.sender.send_email(email, subscribers)
+        receivers = []
+        for s in subscribers:
+            receivers.append(s.user_id)
+
+        # TODO What if BOP is down? Should we discard the message?
+        #      Also, if we process duplicate email to aggregation, we will have issues..
+        await self.sender.send_email(email, receivers)
