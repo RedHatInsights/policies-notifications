@@ -5,7 +5,7 @@ import aiohttp
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 
-from ..core.config import BOP_URL, BOP_APITOKEN, BOP_CLIENT_ID
+from ..core.config import BOP_URL, BOP_APITOKEN, BOP_CLIENT_ID, BOP_ENV
 from ..core.errors import BOPException
 
 logger = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class BopSender:
 
     def __init__(self) -> None:
-        headers = {"x-rh-apitoken": BOP_APITOKEN, "x-rh-clientid": BOP_CLIENT_ID}
+        headers = {"x-rh-apitoken": BOP_APITOKEN, "x-rh-clientid": BOP_CLIENT_ID, "x-rh-insights-env": BOP_ENV}
         self.session = aiohttp.ClientSession(headers=headers,
                                              connector=aiohttp.TCPConnector(verify_ssl=False))
 

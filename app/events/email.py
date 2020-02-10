@@ -7,14 +7,12 @@ from aiokafka import AIOKafkaConsumer
 from .models import Notification
 from ..email.process import EmailProcessor
 from ..core.config import KAFKA_BOOTSTRAP_SERVERS, KAFKA_QUEUE_EMAIL
-from ..core.errors import BOPException
 
 logger = logging.getLogger(__name__)
 
 
 class EmailSubscriptionConsumer:
     def __init__(self):
-        self.logger = logging.getLogger(__name__)
         loop = asyncio.get_event_loop()
         self.consumer = AIOKafkaConsumer(
             KAFKA_QUEUE_EMAIL, loop=loop, bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
@@ -53,7 +51,6 @@ class EmailSubscriptionConsumer:
             async for msg in self.consumer:
                 try:
                     notification: Notification = Notification(**msg.value)
-                    self.logger.info('Received msg from Kafka: %s', notification.dict())
                     await self.processor.process(notification)
                     await self.consumer.commit()
                 except Exception as e:
