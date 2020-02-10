@@ -1,0 +1,2 @@
+class BOPException(Exception):
+    pass
