@@ -33,6 +33,8 @@ class WebhookEndpoint(db.Model):
     __tablename__ = 'endpoint_webhooks'
     id = db.Column(db.Integer(), primary_key=True, index=True)
     endpoint_id = db.Column(db.Integer(), db.ForeignKey("endpoints.id"))
+    url = db.Column(db.Unicode(), nullable=False)
+    method = db.Column(db.String(6), nullable=False)
 
 
 class EmailSubscription(db.Model):

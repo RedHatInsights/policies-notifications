@@ -17,6 +17,7 @@ async def get_endpoints():
 
 @endpoints.post("/endpoints")
 async def create_endpoint(endpoint: Endpoint):
+    # TODO This should maybe return 204 or something (no response) ? Now it returns null
     await endpoint_db.create_endpoint(account_id='default', endpoint=endpoint)
 
 

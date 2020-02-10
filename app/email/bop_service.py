@@ -20,15 +20,14 @@ class BopSender:
 
     async def send_email(self, payload, receivers):
         email_set: List[Email] = []
-        for r in receivers:
+        if len(receivers) > 0:
             email: Email = Email(
                 subject='Custom Policy Notification',
                 bodyType='html',
                 recipients=receivers,
                 body=payload)
             email_set.append(email)
-
-        if len(email_set) < 1:
+        else:
             return
 
         emails: Emails = Emails(emails=email_set)

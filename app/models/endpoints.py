@@ -30,6 +30,11 @@ class WebhookAttributes(Attributes):
     # Request headers
 
 
+class WebhookOut(WebhookAttributes):
+    class Config:
+        orm_mode = True
+
+
 class EmailAttributes(Attributes):
     to: str
 
@@ -46,7 +51,9 @@ class Endpoint(BaseModel):
 
 class EndpointOut(Endpoint):
     id: UUID
-    endpoint_type: int
+    # endpoint_type: int # This has to be converted back to string..
+
+    properties: WebhookOut
 
     class Config:
         orm_mode = True
