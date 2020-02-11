@@ -1,8 +1,10 @@
 import logging
 from typing import List
 import json
-import sched
-import time
+from datetime import date, timedelta, datetime
+
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 from ..events.models import Notification
 from .template import TemplateEngine
@@ -29,6 +31,13 @@ class EmailProcessor:
     def __init__(self) -> None:
         self.rendering = TemplateEngine()
         self.sender = BopSender()
+        self.scheduler = AsyncIOScheduler()
+        cron_trigger = CronTrigger(hour=1)
+        self.scheduler.add_job(self.daily_mail, cron_trigger)
+        self.scheduler.start()
+
+    def shutdown(self):
+        self.scheduler.shutdown(wait=False)
 
     async def _send_to_subscribers(self, account_id: str, template_type: str, data: dict):
         email = await self.rendering.render(template_type, data)
@@ -45,10 +54,14 @@ class EmailProcessor:
         await email_store.insert_email(account_id, data)
         await self._send_to_subscribers(account_id, self.INSTANT_TEMPLATE_KEY, data)
 
-    async def process_aggregated(self):
-        # Should the scheduler give this one a timestamp?
-        # Load all stored emails (not processed previously) for the past defined time, group by account_id
-        emails: List[EmailAggregation] = await email_store.fetch_emails()
+    async def daily_mail(self):
+        today = date.today()
+        today = datetime(today.year, today.month, today.day)
+        yesterday = today - timedelta(days=1)
+        await self.process_aggregated(yesterday, today)
+
+    async def process_aggregated(self, start_time: datetime, end_time: datetime):
+        emails: List[EmailAggregation] = await email_store.fetch_emails(start_time, end_time)
 
         prev_account_id = None
         aggregated = {}
@@ -69,4 +82,5 @@ class EmailProcessor:
         for account_aggregate in aggregated.items():
             account_id = account_aggregate[0]
             policies = account_aggregate[1]
-            await self._send_to_subscribers(account_id, self.DAILY_TEMPLATE_KEY, policies)
+            data: dict = {"trigger_stats": policies}
+            await self._send_to_subscribers(account_id, self.DAILY_TEMPLATE_KEY, data)

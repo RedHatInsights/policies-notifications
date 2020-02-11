@@ -6,10 +6,11 @@
 <body>
     <p>Hi Jerome,</p>
     <p>&nbsp;</p>
-    <p>Your {{ tags.display_name }} system was identified as a match for the following Custom Policies:</p>
+    <p></p>
+    <p>Your systems were identified as a match for the following Custom Policies:</p>
     <ul id="navigation">
-    {% for item in triggerNames %}
-        <li>{{ item }}</li>
+    {% for key, value in trigger_stats.items() %}
+        <li>{{ key }} = {{ value }}</li>
     {% endfor %}
     </ul>
     <p>You are receiving this email because you are subscribed to Email Notifications for your account.</p>

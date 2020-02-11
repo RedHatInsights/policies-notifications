@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 pylint = "*"
 autopep8 = "*"
+apscheduler = "*"
 
 [packages]
 fastapi = "*"
@@ -15,6 +16,7 @@ asyncpg = "*"
 gino = "*"
 aiokafka = "*"
 jinja2 = "*"
+apscheduler = "*"
 
 [requires]
 python_version = "3.8"

@@ -33,6 +33,7 @@ class EmailSubscriptionConsumer:
         logger.info('EmailSubscriptionConsumer shutdown called')
         self._running = False
         await self.consumer.stop()
+        self.processor.shutdown()
 
     async def restart(self):
         logger.info('Restarting consumer after 3 second timeout')
