@@ -64,16 +64,15 @@ logger = logging.getLogger(__name__)
 @notif_app.on_event("startup")
 async def startup_event():
     await conn.setup()
-    # await consumer.start()
+    await consumer.start()
     await email_consumer.start()
-    # await email_consumer.consume()
     logger.info('Notifications backend started')
 
 
 @notif_app.on_event("shutdown")
 async def shutdown_event():
     await conn.shutdown()
-    # await consumer.shutdown()
+    await consumer.shutdown()
     await email_consumer.shutdown()
 
 # db: MetaData = Gino(app, dsn=DATABASE_CONFIG.url)

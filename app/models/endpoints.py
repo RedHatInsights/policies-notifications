@@ -41,7 +41,7 @@ class EmailAttributes(Attributes):
 
 # Base endpoint definition
 class Endpoint(BaseModel):
-    endpoint_type: EndpointType
+    #endpoint_type: EndpointType
     name: str = None
     description: str = None
     enabled: bool = False
@@ -59,16 +59,17 @@ class EndpointOut(Endpoint):
         orm_mode = True
 
 
-class EndpointDB(Endpoint):
-    id: UUID
-    accountID: str  # This is DB only - not response / request model
-    created: datetime
-    modified: datetime
+class EndpointResponse(Endpoint):
+    # id: UUID
+    # accountID: str  # This is DB only - not response / request model
+    # created: datetime
+    # modified: datetime
     # These we might need in the UI?
-    last_delivery_status: datetime
-    last_delivery_time: datetime
-    last_failure_time: datetime
+    # last_delivery_status: datetime
+    # last_delivery_time: datetime
+    # last_failure_time: datetime
     # auto_disabled etc? Tai vastavaa infoa.
 
     class Config:
         orm_mode = True
+        allow_population_by_field_name = True

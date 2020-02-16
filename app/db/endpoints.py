@@ -1,6 +1,6 @@
 from typing import List
 
-from ..models.endpoints import Endpoint as EndpointCreate, EndpointType, WebhookAttributes
+from ..models.endpoints import Endpoint as EndpointCreate, EndpointResponse, EndpointType, WebhookAttributes
 from .schemas import Endpoint, WebhookEndpoint
 
 
@@ -31,7 +31,19 @@ async def create_endpoint(account_id: str, endpoint: EndpointCreate):
 
 
 async def get_endpoint(account_id: str, id: str):
-    return await Endpoint.get(id)
+    # TODO Missing account_id filtering
+    endpoint = await Endpoint.get(id)
+    if endpoint.endpoint_type == 1:
+        webhook: WebhookEndpoint = await WebhookEndpoint.query.where(WebhookEndpoint.endpoint_id == endpoint.id)\
+            .gino.one()
+        print('Received: ', endpoint.__dict__)
+        print('Received 2: ', webhook.__dict__)
+        #ep: EndpointResponse = EndpointResponse(**endpoint.__dict__)
+        ep = EndpointResponse.from_orm(endpoint)
+        ep.properties = webhook
+        return ep
+
+    return endpoint
 
 
 async def delete_endpoint(account_id: str, id: str):
