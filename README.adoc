@@ -1,0 +1,9 @@
+== Installing database schema
+
+Set the env variable ``DATABASE_URL`` to your Postgres connection string. Then run ``alembic upgrade head`` to create/update your database schema.
+
+== Running the application
+
+From the main directory, run:
+
+``uvicorn app.main:notif_app --host 0.0.0.0``
