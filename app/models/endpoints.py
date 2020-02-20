@@ -5,7 +5,7 @@ from datetime import datetime
 from uuid import UUID
 
 # Third-party
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, HttpUrl, Field
 
 
 class EndpointType(IntEnum):
@@ -26,6 +26,9 @@ class Attributes(BaseModel):
 class WebhookAttributes(Attributes):
     url: HttpUrl
     method: HttpType = HttpType.GET
+    disable_ssl_verification: bool
+    secret_token: str
+    payload_transformer: str
     # timeout? SSL?
     # Request headers
 
@@ -73,3 +76,8 @@ class EndpointResponse(Endpoint):
     class Config:
         orm_mode = True
         allow_population_by_field_name = True
+
+
+class Settings(BaseModel):
+    custom_policies_daily_mail: bool = Field(None, alias='custom-policies-daily-mail')
+    custom_policies_instant_mail: bool = Field(None, alias='custom-policies-instant-mail')
