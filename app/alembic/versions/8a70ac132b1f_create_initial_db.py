@@ -45,7 +45,10 @@ def upgrade():
         sa.Column('id', sa.Integer(), primary_key=True),
         sa.Column('endpoint_id', UUID(), nullable=False, index=True),
         sa.Column('url', sa.Unicode(), nullable=False),
-        sa.Column('method', sa.String(10), nullable=False)  # We could use enum numbering
+        sa.Column('method', sa.String(10), nullable=False),  # We could use enum numbering
+        sa.Column('disable_ssl_verification', sa.Boolean(), nullable=False, default=False),
+        sa.Column('secret_token', sa.String(255), nullable=True),
+        sa.Column('payload_transformer', sa.String(50), nullable=True)
     )
 
     op.create_table(

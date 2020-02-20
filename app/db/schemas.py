@@ -35,6 +35,9 @@ class WebhookEndpoint(db.Model):
     endpoint_id = db.Column(db.Integer(), db.ForeignKey("endpoints.id"))
     url = db.Column(db.Unicode(), nullable=False)
     method = db.Column(db.String(6), nullable=False)
+    disable_ssl_verification = db.Column(db.Boolean(), nullable=False, default=False)
+    secret_token = db.Column(db.String(255), nullable=True)
+    payload_transformer = db.Column(db.String(50), nullable=True)
 
 
 class EmailSubscription(db.Model):
