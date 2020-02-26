@@ -11,6 +11,7 @@ pytest = "*"
 flake8 = "*"
 pytest-asyncio = "*"
 pytest-aiohttp = "*"
+rope = "*"
 
 [packages]
 fastapi = "==0.54.1"

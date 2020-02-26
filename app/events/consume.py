@@ -40,13 +40,17 @@ class EventConsumer:
         try:
             async for msg in self.consumer:
                 try:
+                    print('Received: {}'.format(msg.value))
                     notification: Action = Action(**msg.value)
                     await self.processor.process(notification)
-                    await self.consumer.commit()
                 except Exception as e:
-                    logger.error('Received error while trying to process webhook: %s', e)
+                    print(str(e))
+                    logger.error('Received error while trying to process webhook: ' + str(e))
                     self.failed_webhooks.inc()
                     # await self.restart()
+                finally:
+                    # Depending on the error handling, move this..
+                    await self.consumer.commit()
 
         finally:
             pass

@@ -15,13 +15,19 @@ endpoints = APIRouter()
 async def get_endpoints(identity: Credentials = Depends(decode_identity_header)):
     # Depends on security with the account_id
     db_endpoints = await endpoint_db.get_endpoints(account_id=identity.account_number)
+    print(len(db_endpoints))
     return db_endpoints
 
 
 @endpoints.post("/endpoints", status_code=204)
 async def create_endpoint(endpoint: Endpoint, identity: Credentials = Depends(decode_identity_header)):
-    # TODO This should maybe return 204 or something (no response) ? Now it returns null
-    await endpoint_db.create_endpoint(account_id=identity.account_number, endpoint=endpoint)
+    # TODO This returns 204.. should probably return the created Endpoint with the generated id
+    import json
+    print('Storing endpoint: {}'.format(json.dumps(endpoint.dict())))
+    try:
+        await endpoint_db.create_endpoint(account_id=identity.account_number, endpoint=endpoint)
+    except Exception as e:
+        print(e)
 
 
 @endpoints.post("/endpoints/email/subscription", status_code=204)
@@ -71,9 +77,22 @@ async def get_endpoint(id: str, identity: Credentials = Depends(decode_identity_
 
 @endpoints.delete("/endpoints/{id}", status_code=204)
 async def delete_endpoint(id: str, identity: Credentials = Depends(decode_identity_header)):
-    pass
+    await endpoint_db.delete_endpoint(identity.account_number, id)
 
 
 @endpoints.put("/endpoints/{id}")
 async def update_endpoint(id: str, endpoint: Endpoint, identity: Credentials = Depends(decode_identity_header)):
+    pass
+
+
+@endpoints.get("/endpoints/{id}/history")
+async def get_endpoint_history(id: str, identity: Credentials = Depends(decode_identity_header)):
+    # TODO Add here get notification_history for an endpoint..
+    # TODO Should we have a limit here / timelimit? Or paging?
+    return await endpoint_db.get_endpoint_history(identity.account_number, id)
+
+
+@endpoints.get("/endpoints/{id}/history/{history_id}")
+async def get_endpoint_history_full_details(id: str, identity: Credentials = Depends(decode_identity_header)):
+    # TODO Should the details be a separate REST-call? Avoids returning too much data for the table call
     pass

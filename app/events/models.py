@@ -22,7 +22,7 @@ class Event(BaseModel):
 class Action(BaseModel):
     tenantId: str
     properties: Mapping[str, str]
-    event: Event
+    #event: Event
 
     class Config:
         orm_mode = True

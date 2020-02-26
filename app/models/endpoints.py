@@ -27,7 +27,7 @@ class WebhookAttributes(Attributes):
     method: HttpType = HttpType.GET
     disable_ssl_verification: bool
     secret_token: str
-    payload_transformer: str
+    # payload_transformer: str
     # timeout? SSL?
     # Request headers
 
@@ -47,8 +47,12 @@ class Endpoint(BaseModel):
     name: str = None
     description: str = None
     enabled: bool = False
+    # endpoint_type: int = 1
     properties: Union[WebhookAttributes, EmailAttributes] = None
     # For response model, do we need a "status / state" properties etc?
+
+    # class Config:
+    #     orm_mode = True
 
 
 class EndpointOut(Endpoint):
@@ -66,11 +70,6 @@ class EndpointResponse(Endpoint):
     # accountID: str  # This is DB only - not response / request model
     # created: datetime
     # modified: datetime
-    # These we might need in the UI?
-    # last_delivery_status: datetime
-    # last_delivery_time: datetime
-    # last_failure_time: datetime
-    # auto_disabled etc? Tai vastavaa infoa.
 
     class Config:
         orm_mode = True
@@ -84,3 +83,29 @@ class Settings(BaseModel):
 
 class StatusReply(BaseModel):
     status: str
+
+
+class NotificationHistory(BaseModel):
+    account_id: str
+    endpoint_id: str
+    invocation_time: int = 0
+    invocation_result: bool = False
+    details: dict = None
+
+    class Config:
+        orm_mode = True
+        allow_population_by_field_name = True
+
+
+class NotificationHistoryOut(NotificationHistory):
+    id: str
+
+    class Config:
+        orm_mode = True
+
+
+class NotificationDetails(BaseModel):
+    code: int
+
+    class Config:
+        orm_mode = True
