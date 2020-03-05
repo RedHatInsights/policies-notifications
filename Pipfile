@@ -9,7 +9,7 @@ autopep8 = "*"
 apscheduler = "*"
 
 [packages]
-fastapi = "*"
+fastapi = "==0.49.2"
 uvicorn = "*"
 aiohttp = {extras = ["speedups"],version = "*"}
 asyncpg = "*"
