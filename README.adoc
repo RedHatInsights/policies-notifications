@@ -1,9 +1,40 @@
+== Installing python dependencies
+
+This project uses a Pipfile to lock all the dependencies, to setup you will need to install pipenv.
+`pip install pipenv`. 
+You will also need `pg_config`, you can fetch it by installing `postgresql-devel` on fedora or `libpq-dev` in debian based distros.
+
+Once dev tools are installed, install this project's dependencies with: `pipenv install`.
+
+`pipenv` installs by default all dependencies in a virtual environment, for simplicity you can configure your environment
+to run inside it by running: `pipenv shell` or prepend any of the following commands with: `pipenv run`
+
+== Configuring your environment
+
+Before starting this service, you need to set the following env variables.
+
+- DATABASE_URL - e.g.  postgresql://user:pass@localhost:5432/notifications-db
+- KAFKA_BOOTSTRAP_SERVERS
+- KAFKA_QUEUE_HOOK
+- KAFKA_QUEUE_EMAIL
+- BOP_URL
+- BOP_APITOKEN
+- BOP_CLIENT_ID
+- BOP_ENV
+
 == Installing database schema
 
-Set the env variable ``DATABASE_URL`` to your Postgres connection string. Then run ``alembic upgrade head`` to create/update your database schema.
+Make sure the database already exists and has the `pgcrypto` extension created e.g.:
+
+```
+ \c notifications-db;
+ CREATE EXTENSION pgcrypto;
+```
+
+Run ``alembic upgrade head`` from the `app` folder to create/update your database schema.
 
 == Running the application
 
 From the main directory, run:
 
-``uvicorn app.main:notif_app --host 0.0.0.0``
+``uvicorn app.main:notif_app --host 0.0.0.0 --port 8080``
