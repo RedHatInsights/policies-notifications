@@ -49,7 +49,7 @@ async def subscribe_email_endpoint(event_type: str, identity: Credentials = Depe
     await sub_db.add_email_subscription(identity.account_number, identity.username, event_type)
 
 
-@endpoints.delete("/endpoints/email/subscription/{event_type}")
+@endpoints.delete("/endpoints/email/subscription/{event_type}", status_code=204)
 async def unsubscribe_email_endpoint(event_type: str, identity: Credentials = Depends(decode_identity_header)):
     await sub_db.remove_email_subscription(identity.account_number, identity.username, event_type)
 
@@ -59,7 +59,7 @@ async def get_endpoint(id: str, identity: Credentials = Depends(decode_identity_
     return await endpoint_db.get_endpoint(account_id=identity.account_number, id=id)
 
 
-@endpoints.delete("/endpoints/{id}")
+@endpoints.delete("/endpoints/{id}", status_code=204)
 async def delete_endpoint(id: str, identity: Credentials = Depends(decode_identity_header)):
     pass
 
