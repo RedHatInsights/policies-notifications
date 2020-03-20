@@ -51,8 +51,8 @@ class EmailProcessor:
         account_id: str = notification.tenantId
 
         data: dict = notification.dict()
-        await email_store.insert_email(account_id, data)
         await self._send_to_subscribers(account_id, self.INSTANT_TEMPLATE_KEY, data)
+        await email_store.insert_email(account_id, data)
 
     async def daily_mail(self):
         today = date.today()
