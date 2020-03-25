@@ -22,7 +22,7 @@ class BopSender:
         email_set: List[Email] = []
         if len(receivers) > 0:
             email: Email = Email(
-                subject='Custom Policy Notification',
+                subject='Policy Notification',
                 bodyType='html',
                 recipients=receivers,
                 body=payload)

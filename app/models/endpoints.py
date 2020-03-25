@@ -79,5 +79,5 @@ class EndpointResponse(Endpoint):
 
 
 class Settings(BaseModel):
-    custom_policies_daily_mail: bool = Field(None, alias='custom-policies-daily-mail')
-    custom_policies_instant_mail: bool = Field(None, alias='custom-policies-instant-mail')
+    policies_daily_mail: bool = Field(None, alias='policies-daily-mail')
+    policies_instant_mail: bool = Field(None, alias='policies-instant-mail')
