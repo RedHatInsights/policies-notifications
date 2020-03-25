@@ -6,9 +6,9 @@ from ..events.models import Notification
 
 
 def test_aggregate_duplicate():
-    notif = Notification(tenantId='a', insight_id='b', tags={}, triggerNames=['trigger1', 'trigger2'])
+    notif = Notification(tenantId='a', insightId='b', tags={}, triggerNames=['trigger1', 'trigger2'])
     # Assume trigger1 was fixed in the next report
-    notif2 = Notification(tenantId='a', insight_id='b', tags={}, triggerNames=['trigger2'])
+    notif2 = Notification(tenantId='a', insightId='b', tags={}, triggerNames=['trigger2'])
 
     e = EmailAggregation()
     e.account_id = 'a'
@@ -27,9 +27,9 @@ def test_aggregate_duplicate():
 
 
 def test_aggregate_per_account():
-    notif = Notification(tenantId='a', insight_id='b', tags={}, triggerNames=['trigger1', 'trigger2'])
+    notif = Notification(tenantId='a', insightId='b', tags={}, triggerNames=['trigger1', 'trigger2'])
     # Assume trigger1 was fixed in the next report
-    notif2 = Notification(tenantId='b', insight_id='b', tags={}, triggerNames=['trigger2'])
+    notif2 = Notification(tenantId='b', insightId='b', tags={}, triggerNames=['trigger2'])
 
     e = EmailAggregation()
     e.account_id = 'a'

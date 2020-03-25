@@ -30,6 +30,6 @@ class Action(BaseModel):
 
 class Notification(BaseModel):
     tenantId: str
-    insight_id: str
+    insightId: str
     tags: Mapping[str, str]
     triggerNames: List[str]
