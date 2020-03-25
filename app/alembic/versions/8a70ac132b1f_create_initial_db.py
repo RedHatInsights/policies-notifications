@@ -63,6 +63,7 @@ def upgrade():
         'email_aggregation',
         sa.Column('id', sa.Integer(), primary_key=True),
         sa.Column('account_id', sa.String(50), nullable=False),
+        sa.Column('insight_id', sa.String(50), nullable=False),
         sa.Column('created', sa.DateTime(timezone=True), server_default=func.now(), nullable=False),
         sa.Column('payload', JSONB, nullable=False),
         #     Needs to be an index of account_id + created as that's the search query

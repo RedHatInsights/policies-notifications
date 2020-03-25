@@ -8,8 +8,9 @@ from .schemas import EmailAggregation
 logger = logging.getLogger(__name__)
 
 
-async def insert_email(account_id: str, email_params: dict):
+async def insert_email(account_id: str, insight_id: str, email_params: dict):
     email: EmailAggregation = EmailAggregation(account_id=account_id,
+                                               insight_id=insight_id,
                                                payload=json.dumps(email_params))
     await email.create()
 
