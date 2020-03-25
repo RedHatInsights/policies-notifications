@@ -25,8 +25,8 @@ async def _get_subscribers(account_id: str, template_type: str):
 
 
 class EmailProcessor:
-    INSTANT_TEMPLATE_KEY = 'custom-policies-instant-mail'
-    DAILY_TEMPLATE_KEY = 'custom-policies-daily-mail'
+    INSTANT_TEMPLATE_KEY = 'policies-instant-mail'
+    DAILY_TEMPLATE_KEY = 'policies-daily-mail'
 
     def __init__(self) -> None:
         self.rendering = TemplateEngine()

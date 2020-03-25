@@ -27,21 +27,21 @@ async def create_endpoint(endpoint: Endpoint, identity: Credentials = Depends(de
 
 @endpoints.post("/endpoints/email/subscription", status_code=204)
 async def update_email_subscriptions(settings: Settings, identity: Credentials = Depends(decode_identity_header)):
-    if settings.custom_policies_instant_mail is not None:
-        if settings.custom_policies_instant_mail is False:
+    if settings.policies_instant_mail is not None:
+        if settings.policies_instant_mail is False:
             await sub_db.remove_email_subscription(identity.account_number, identity.username,
-                                                   'custom-policies-instant-mail')
-        elif settings.custom_policies_instant_mail is True:
+                                                   'policies-instant-mail')
+        elif settings.policies_instant_mail is True:
             await sub_db.add_email_subscription(identity.account_number, identity.username,
-                                                'custom-policies-instant-mail')
+                                                'policies-instant-mail')
 
-    if settings.custom_policies_daily_mail is not None:
-        if settings.custom_policies_daily_mail is False:
+    if settings.policies_daily_mail is not None:
+        if settings.policies_daily_mail is False:
             await sub_db.remove_email_subscription(identity.account_number, identity.username,
-                                                   'custom-policies-daily-mail')
-        elif settings.custom_policies_daily_mail is True:
+                                                   'policies-daily-mail')
+        elif settings.policies_daily_mail is True:
             await sub_db.add_email_subscription(identity.account_number, identity.username,
-                                                'custom-policies-daily-mail')
+                                                'policies-daily-mail')
 
 
 @endpoints.put("/endpoints/email/subscription/{event_type}", status_code=204)
