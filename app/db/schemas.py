@@ -51,5 +51,6 @@ class EmailAggregation(db.Model):
     __tablename__ = 'email_aggregation'
     id = db.Column(db.Integer(), primary_key=True)
     account_id = db.Column(db.String(50), nullable=False)
+    insight_id = db.Column(db.String(50), nullable=False)
     created = db.Column(db.DateTime, default=func.now())
     payload = db.Column(JSONB, nullable=False)
