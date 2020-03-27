@@ -36,18 +36,12 @@ class EmailSubscriptionConsumer:
         self.processor.shutdown()
 
     async def restart(self):
-        logger.info('Restarting consumer after 3 second timeout')
-        await asyncio.sleep(3)
-        logger.info('Restarting..')
+        logger.info('Rolling back the Kafka seek position after 10 second sleep')
+        await asyncio.sleep(10)
         await self.consumer.seek_to_committed()
-        loop = asyncio.get_event_loop()
-        loop.create_task(self.consume())
 
     async def consume(self):
         logger.info('Started consuming messages..')
-        # TODO Surround with try / finally, otherwise errors will crash the consumer
-        # TODO What to do with errors? Such as when BOP service is down. Not commit and simply ignore a while?
-        #      What about other type of errors, such as theoretical broken JSON? Or missing values otherwise
         try:
             async for msg in self.consumer:
                 try:

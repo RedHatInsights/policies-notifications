@@ -5,11 +5,13 @@ from datetime import date, timedelta, datetime
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
+from asyncpg.exceptions import PostgresError
 
 from ..events.models import Notification
 from .template import TemplateEngine
 from .bop_service import BopSender
 from ..db import email as email_store, subscriptions
+from ..db.conn import db
 from ..db.schemas import EmailAggregation
 
 logger = logging.getLogger(__name__)
@@ -73,8 +75,14 @@ class EmailProcessor:
         insight_id: str = notification.insightId
 
         data: dict = notification.dict()
-        await self._send_to_subscribers(account_id, self.INSTANT_TEMPLATE_KEY, data)
-        await email_store.insert_email(account_id, insight_id, data)
+        # Use a transaction to Postgres. First write, then send.. if write and send succeed - commit
+        try:
+            async with db.transaction() as tx:
+                await email_store.insert_email(account_id, insight_id, data)
+                await self._send_to_subscribers(account_id, self.INSTANT_TEMPLATE_KEY, data)
+                await tx.commit()
+        except PostgresError as e:
+            logger.error('Failed to insert to database, fatal error - will not try again: {}'.format(e))
 
     async def daily_mail(self):
         today = date.today()
