@@ -47,7 +47,7 @@ class EmailSubscriptionConsumer:
                 try:
                     notification: Notification = Notification(**msg.value)
                     await self.processor.process(notification)
-                    await self.consumer.commit()
+                    await self.consumer.raise_commit()
                 except Exception as e:
                     logger.error('Received error while trying to send email: %s', e)
                     await self.restart()
