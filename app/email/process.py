@@ -80,7 +80,7 @@ class EmailProcessor:
             async with db.transaction() as tx:
                 await email_store.insert_email(account_id, insight_id, data)
                 await self._send_to_subscribers(account_id, self.INSTANT_TEMPLATE_KEY, data)
-                await tx.commit()
+                tx.raise_commit()
         except PostgresError as e:
             logger.error('Failed to insert to database, fatal error - will not try again: {}'.format(e))
 
