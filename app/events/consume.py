@@ -39,7 +39,7 @@ class EventConsumer:
                     notification: Action = Action(**msg.value)
                     logger.info('Received msg from Kafka: %s', notification.dict())
                     await self.processor.process(notification)
-                    await self.consumer.commit()
+                    self.consumer.raise_commit()
                 except Exception as e:
                     logger.error('Received error while trying to process webhook: %s', e)
                     # await self.restart()
