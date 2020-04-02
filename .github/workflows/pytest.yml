@@ -56,3 +56,10 @@ jobs:
           DATABASE_PORT: ${{ job.services.postgres.ports[5432] }}
           DATABASE_PASSWORD: postgres
           DATABASE_USER: postgres
+          KAFKA_BOOTSTRAP_SERVERS: localhost:9092
+          KAFKA_QUEUE_EMAIL: platform.custom-policies.actions-email
+          KAFKA_QUEUE_HOOK: platform.custom-policies.actions-webhook
+          BOP_URL: https://localhost:3000/v1/sendEmails
+          BOP_APITOKEN: none
+          BOP_ENV: ci
+          BOP_CLIENT_ID: policies
