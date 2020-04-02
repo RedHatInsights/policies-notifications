@@ -7,6 +7,8 @@ verify_ssl = true
 pylint = "*"
 autopep8 = "*"
 apscheduler = "*"
+requests = "*"
+pytest = "*"
 
 [packages]
 fastapi = "==0.49.2"
@@ -14,11 +16,11 @@ uvicorn = "*"
 aiohttp = {extras = ["speedups"],version = "*"}
 asyncpg = "*"
 gino = "*"
-aiokafka = "*"
+robinhood-aiokafka = "*"
 jinja2 = "*"
 apscheduler = "*"
 alembic = "*"
 psycopg2 = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.6"
