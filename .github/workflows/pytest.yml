@@ -19,6 +19,8 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: policies_notifications-test
+        ports:
+          - 5432:5432
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -53,7 +55,7 @@ jobs:
           pipenv run pytest
         env:
           DATABASE_HOST: localhost
-          DATABASE_PORT: ${{ job.services.postgres.ports[5432] }}
+          DATABASE_PORT: 5432
           DATABASE_PASSWORD: postgres
           DATABASE_USER: postgres
           KAFKA_BOOTSTRAP_SERVERS: localhost:9092
