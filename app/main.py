@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from .routers import apps, endpoints
 from .db import conn
 from .events import consume, email
+from .core.config import TESTING
 
 
 notif_app: FastAPI = FastAPI(title='Notifications backend', openapi_url='/api/v1/openapi.json', redoc_url=None)
@@ -25,15 +26,17 @@ logger = logging.getLogger(__name__)
 @notif_app.on_event("startup")
 async def startup_event():
     await conn.setup()
-    await consumer.start()
-    await email_consumer.start()
+    if not TESTING:
+        await consumer.start()
+        await email_consumer.start()
     logger.info('Notifications backend started')
 
 
 @notif_app.on_event("shutdown")
 async def shutdown_event():
     await conn.shutdown()
-    await consumer.shutdown()
-    await email_consumer.shutdown()
+    if not TESTING:
+        await consumer.shutdown()
+        await email_consumer.shutdown()
 
 # db: MetaData = Gino(app, dsn=DATABASE_CONFIG.url)
