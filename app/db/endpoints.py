@@ -1,6 +1,6 @@
 from typing import List
 
-from ..models.endpoints import Endpoint as EndpointCreate, EndpointResponse, EndpointType, WebhookAttributes
+from ..models.endpoints import Endpoint as EndpointCreate, EndpointResponse, WebhookAttributes
 from .schemas import Endpoint, WebhookEndpoint
 
 
@@ -38,7 +38,7 @@ async def get_endpoint(account_id: str, id: str):
             .gino.one()
         print('Received: ', endpoint.__dict__)
         print('Received 2: ', webhook.__dict__)
-        #ep: EndpointResponse = EndpointResponse(**endpoint.__dict__)
+        # ep: EndpointResponse = EndpointResponse(**endpoint.__dict__)
         ep = EndpointResponse.from_orm(endpoint)
         ep.properties = webhook
         return ep

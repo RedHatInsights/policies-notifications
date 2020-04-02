@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class BopSender:
 
     def __init__(self) -> None:
-        headers = {"x-rh-apitoken": BOP_APITOKEN, "x-rh-clientid": BOP_CLIENT_ID, "x-rh-insights-env": BOP_ENV}
+        self.headers = {"x-rh-apitoken": BOP_APITOKEN, "x-rh-clientid": BOP_CLIENT_ID, "x-rh-insights-env": BOP_ENV}
 
     async def send_email(self, payload, receivers):
         email_set: List[Email] = []
@@ -32,8 +32,8 @@ class BopSender:
 
         json_payload = jsonable_encoder(emails)
 
-        async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=None)) as session:
-            async with self.session.post(BOP_URL, json=json_payload) as resp:
+        async with aiohttp.ClientSession(headers=self.headers, connector=aiohttp.TCPConnector(ssl=None)) as session:
+            async with session.post(BOP_URL, json=json_payload) as resp:
                 try:
                     if resp.status == 200:
                         json = await resp.json()

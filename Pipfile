@@ -9,6 +9,7 @@ autopep8 = "*"
 apscheduler = "*"
 requests = "*"
 pytest = "*"
+flake8 = "*"
 
 [packages]
 fastapi = "==0.49.2"

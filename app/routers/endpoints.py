@@ -1,7 +1,6 @@
 from typing import List
 
-from fastapi import FastAPI, Depends, Body
-from starlette.responses import Response
+from fastapi import FastAPI, Depends
 
 from ..models.endpoints import Endpoint, EndpointOut, Settings
 from ..db import endpoints as endpoint_db

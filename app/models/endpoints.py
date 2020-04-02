@@ -1,7 +1,6 @@
 # Standard library
-from typing import List, Union
+from typing import Union
 from enum import Enum, IntEnum
-from datetime import datetime
 from uuid import UUID
 
 # Third-party
@@ -44,7 +43,7 @@ class EmailAttributes(Attributes):
 
 # Base endpoint definition
 class Endpoint(BaseModel):
-    #endpoint_type: EndpointType
+    # endpoint_type: EndpointType
     name: str = None
     description: str = None
     enabled: bool = False

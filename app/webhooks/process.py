@@ -4,7 +4,6 @@ import aiohttp
 
 from ..events.models import Action
 from ..db import endpoints
-# from ..db.schemas import Endpoint, WebhookEndpoint
 from ..models.endpoints import Endpoint, WebhookAttributes
 
 logger = logging.getLogger(__name__)
@@ -13,7 +12,7 @@ logger = logging.getLogger(__name__)
 class WebhookProcessor:
 
     def __init__(self) -> None:
-        self.session = aiohttp.ClientSession( connector=aiohttp.TCPConnector(verify_ssl=False))
+        self.session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False))
 
     async def _call_webhook(self, endpoint: WebhookAttributes):
         logger.info('Webhook call to: %s', endpoint.__dict__)

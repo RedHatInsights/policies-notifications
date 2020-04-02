@@ -12,7 +12,7 @@ async def add_email_subscription(account_id: str, user_id: str, event_type: str)
     subscription.event_type = event_type
     try:
         await subscription.create()
-    except UniqueViolationError as e:
+    except UniqueViolationError:
         # This is acceptable, the subscription already exists
         pass
 
