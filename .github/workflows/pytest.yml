@@ -37,6 +37,8 @@ jobs:
       - name: Install dependencies
         run: |
           pipenv install --dev
+        env:
+          CI: true
       - name: Lint with Flake8
         run: flake8 . --count --ignore=E402,W503,W504 --max-complexity=10 --max-line-length=127 --statistics
       - name: Test with pytest
