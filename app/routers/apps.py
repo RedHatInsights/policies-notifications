@@ -2,11 +2,9 @@ from typing import List
 from uuid import UUID
 
 from fastapi import FastAPI, HTTPException
-from starlette.responses import Response
 
 from ..models.apps import App, AppOut
 from ..db import apps as apps_db
-# from .auth import Credentials, decode_identity_header
 
 apps = FastAPI()
 

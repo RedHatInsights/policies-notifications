@@ -1,7 +1,7 @@
 """Create initial db
 
 Revision ID: 8a70ac132b1f
-Revises: 
+Revises:
 Create Date: 2020-01-29 15:55:07.880970
 
 """
