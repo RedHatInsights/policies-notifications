@@ -38,3 +38,10 @@ Run ``alembic upgrade head`` from the `app` folder to create/update your databas
 From the main directory, run:
 
 ``uvicorn app.main:notif_app --host 0.0.0.0 --port 8080``
+
+== Tests
+
+Tests that affect multiple modules ("integration testing") should be placed in the ``tests`` directory. Simple unit tests
+should stay inside the module.
+
+Run tests with `pytest`

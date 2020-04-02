@@ -19,6 +19,8 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: policies_notifications-test
+        ports:
+          - 5432:5432
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -27,14 +29,19 @@ jobs:
           --health-retries 5
 
     steps:
+      - name: Install Postgres client
+        run: sudo apt-get install postgresql-client
+      - name: Install pgcrypto extension
+        run: psql -h localhost -U postgres -d policies_notifications-test -c "CREATE EXTENSION pgcrypto;"
+        env:
+          PGPASSWORD: postgres
       - uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install pipenv
-        run: |
-          pip install pipenv
+        run: pip install pipenv
       - name: Cache pipenv's virtualenv dir
         id: cache-pipenv
         uses: actions/cache@v1
@@ -53,7 +60,7 @@ jobs:
           pipenv run pytest
         env:
           DATABASE_HOST: localhost
-          DATABASE_PORT: ${{ job.services.postgres.ports[5432] }}
+          DATABASE_PORT: 5432
           DATABASE_PASSWORD: postgres
           DATABASE_USER: postgres
           KAFKA_BOOTSTRAP_SERVERS: localhost:9092
