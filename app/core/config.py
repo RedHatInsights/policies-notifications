@@ -19,7 +19,7 @@ DATABASE_PASSWORD = config('DATABASE_PASSWORD', cast=Secret, default='')
 DATABASE_NAME = config('DATABASE_NAME', default='policies_notifications')
 
 if TESTING:
-    DATABASE_NAME = 'hook-test'
+    DATABASE_NAME = DATABASE_NAME + '-test'
     DATABASE_URL = config('TEST_DATABASE_URL', cast=URL, default=create_db_url())
 else:
     DATABASE_URL = config('DATABASE_URL', cast=URL, default=create_db_url())
