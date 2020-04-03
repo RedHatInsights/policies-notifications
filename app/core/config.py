@@ -8,7 +8,7 @@ TESTING = config('TESTING', cast=bool, default=False)  # Set in conftest.py
 
 
 def create_db_url():
-    return 'postgres://{}:{}@{}:{}/{}' \
+    return 'postgresql://{}:{}@{}:{}/{}' \
         .format(DATABASE_USER, str(DATABASE_PASSWORD), DATABASE_HOST, DATABASE_PORT, DATABASE_NAME)
 
 

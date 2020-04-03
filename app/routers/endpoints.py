@@ -1,12 +1,12 @@
 from typing import List
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
+from starlette.status import HTTP_404_NOT_FOUND
 
-from ..models.endpoints import Endpoint, EndpointOut, Settings
-from ..db import endpoints as endpoint_db
-from ..db import subscriptions as sub_db
+from ..models.endpoints import Endpoint, EndpointOut, Settings, StatusReply
+from ..db import endpoints as endpoint_db, subscriptions as sub_db
+from ..db.schemas import EmailSubscription
 from .auth import Credentials, decode_identity_header
-
 
 endpoints = FastAPI()
 
@@ -41,6 +41,17 @@ async def update_email_subscriptions(settings: Settings, identity: Credentials =
         elif settings.policies_daily_mail is True:
             await sub_db.add_email_subscription(identity.account_number, identity.username,
                                                 'policies-daily-mail')
+
+
+@endpoints.get("/endpoints/email/subscription/{event_type}", response_model=StatusReply)
+async def get_email_subscription_status(event_type: str,
+                                        identity: Credentials = Depends(decode_identity_header)):
+    subscription: EmailSubscription = await sub_db.get_email_subscription_status(identity.account_number,
+                                                                                 identity.username, event_type)
+    if subscription is None:
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail='No subscription found')
+
+    return StatusReply(status='Subscribed')
 
 
 @endpoints.put("/endpoints/email/subscription/{event_type}", status_code=204)
