@@ -41,7 +41,7 @@ From the main directory, run:
 
 == Tests
 
-Tests that affect multiple modules ("integration testing") should be placed in the ``tests`` directory. Simple unit tests
-should stay inside the module.
+Tests that affect multiple modules ("integration testing") should be placed in the ``tests`` directory. This includes any
+tests that require database or other external services (such as mock http server). Simple unit tests should stay inside the module.
 
 Run tests with `pytest`

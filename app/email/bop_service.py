@@ -32,7 +32,7 @@ class BopSender:
 
         json_payload = jsonable_encoder(emails)
 
-        async with aiohttp.ClientSession(headers=self.headers, connector=aiohttp.TCPConnector(ssl=None)) as session:
+        async with aiohttp.ClientSession(headers=self.headers, connector=aiohttp.TCPConnector(ssl=False)) as session:
             async with session.post(BOP_URL, json=json_payload) as resp:
                 try:
                     if resp.status == 200:

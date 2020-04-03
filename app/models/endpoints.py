@@ -80,3 +80,7 @@ class EndpointResponse(Endpoint):
 class Settings(BaseModel):
     policies_daily_mail: bool = Field(None, alias='policies-daily-mail')
     policies_instant_mail: bool = Field(None, alias='policies-instant-mail')
+
+
+class StatusReply(BaseModel):
+    status: str

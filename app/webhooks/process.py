@@ -11,15 +11,16 @@ logger = logging.getLogger(__name__)
 
 class WebhookProcessor:
 
-    def __init__(self) -> None:
-        self.session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False))
+    # def __init__(self) -> None:
+    #     self.session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False))
 
     async def _call_webhook(self, endpoint: WebhookAttributes):
         logger.info('Webhook call to: %s', endpoint.__dict__)
-        async with self.session.request(endpoint.method, endpoint.url) as resp:
-            # TODO Process reply, write statistics to db / handle errors etc
-            logger.info('Got reply with: %s', resp.status)
-            pass
+        async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
+            async with session.request(endpoint.method, endpoint.url) as resp:
+                # TODO Process reply, write statistics to db / handle errors etc
+                logger.info('Got reply with: %s', resp.status)
+                pass
 
     async def process(self, action: Action):
         account_id: str = action.tenantId
