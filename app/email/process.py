@@ -98,6 +98,6 @@ class EmailProcessor:
         for account_aggregate in aggregated_emails.items():
             account_id = account_aggregate[0]
             policies = account_aggregate[1]
-            data: dict = {"trigger_stats": policies}
+            data: dict = {"trigger_stats": policies, 'start_time': start_time, 'end_time': end_time}
             await self._send_to_subscribers(account_id, self.DAILY_TEMPLATE_KEY, data)
             await email_store.remove_aggregations(start_time, end_time, account_id)
