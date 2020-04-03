@@ -34,7 +34,7 @@ async def test_with_aggregated_params():
     today = datetime(today.year, today.month, today.day)
     yesterday = today - timedelta(days=1)
     params: dict = {"trigger_stats": policies, 'start_time': yesterday, 'end_time': today, 'now': now}
-    rendered = await engine.render('policies-daily-mail', params)
+    await engine.render('policies-daily-mail', params)
 
 
 @pytest.mark.asyncio
@@ -45,4 +45,4 @@ async def test_with_instant_params():
     notification: Notification = Notification(tenantId='test', insightId='1', tags=tags, triggerNames=trigger_names)
     notif_dict = notification.dict()
     notif_dict['now'] = datetime.now()
-    rendered = await engine.render('policies-instant-mail', notif_dict)
+    await engine.render('policies-instant-mail', notif_dict)
