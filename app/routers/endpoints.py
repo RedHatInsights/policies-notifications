@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from starlette.status import HTTP_404_NOT_FOUND
 
 from ..models.endpoints import Endpoint, EndpointOut, Settings, StatusReply
@@ -8,7 +8,7 @@ from ..db import endpoints as endpoint_db, subscriptions as sub_db
 from ..db.schemas import EmailSubscription
 from .auth import Credentials, decode_identity_header
 
-endpoints = FastAPI()
+endpoints = APIRouter()
 
 
 @endpoints.get("/endpoints", response_model=List[EndpointOut])

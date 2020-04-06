@@ -1,12 +1,12 @@
 from typing import List
 from uuid import UUID
 
-from fastapi import FastAPI, HTTPException
+from fastapi import APIRouter, HTTPException
 
 from ..models.apps import App, AppOut
 from ..db import apps as apps_db
 
-apps = FastAPI()
+apps = APIRouter()
 
 """
 TODO:

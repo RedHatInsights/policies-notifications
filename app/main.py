@@ -10,16 +10,15 @@ from .db import conn
 from .events import consume, email
 from .core.config import TESTING
 
-
-notif_app: FastAPI = FastAPI(title='Notifications backend', openapi_url='/api/v1/openapi.json', redoc_url=None)
-notif_app.include_router(apps.apps, tags=['Apps'])
-notif_app.include_router(endpoints.endpoints, tags=['Endpoints'])
-
 consumer = consume.EventConsumer()
 email_consumer = email.EmailSubscriptionConsumer()
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+
+
+notif_app: FastAPI = FastAPI(title='Notifications backend', openapi_url='/api/v1/openapi.json', redoc_url=None)
+
 # The main application (register additional routers here)
 
 
@@ -39,4 +38,6 @@ async def shutdown_event():
         await consumer.shutdown()
         await email_consumer.shutdown()
 
-# db: MetaData = Gino(app, dsn=DATABASE_CONFIG.url)
+
+notif_app.include_router(apps.apps, tags=['Apps'])
+notif_app.include_router(endpoints.endpoints, tags=['Endpoints'])
