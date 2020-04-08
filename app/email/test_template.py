@@ -49,6 +49,6 @@ async def test_with_instant_params():
 
 
 def test_set_of_sets():
-    list_of_sets = [{'a','b', 'c'}, {'a'}, {'b', 'c'}]
+    list_of_sets = [{'a', 'b', 'c'}, {'a'}, {'b', 'c'}]
     clear_set = set_from_sets(list_of_sets)
     assert clear_set == {'a', 'b', 'c'}
