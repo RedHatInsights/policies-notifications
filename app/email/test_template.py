@@ -5,7 +5,7 @@ from jinja2 import UndefinedError
 
 from ..core.errors import NoTemplateFoundException
 from ..events.models import Notification
-from .template import TemplateEngine
+from .template import TemplateEngine, set_from_sets
 
 
 @pytest.mark.asyncio
@@ -28,7 +28,7 @@ async def test_no_template_exception():
 @pytest.mark.asyncio
 async def test_with_aggregated_params():
     engine: TemplateEngine = TemplateEngine()
-    policies = {'Strict policy': 1, 'Relaxed one': 2}
+    policies = {'Strict policy': {'a'}, 'Relaxed one': {'a', 'b'}}
     now = datetime.now()
     today = date.today()
     today = datetime(today.year, today.month, today.day)
@@ -46,3 +46,9 @@ async def test_with_instant_params():
     notif_dict = notification.dict()
     notif_dict['now'] = datetime.now()
     await engine.render('policies-instant-mail', notif_dict)
+
+
+def test_set_of_sets():
+    list_of_sets = [{'a','b', 'c'}, {'a'}, {'b', 'c'}]
+    clear_set = set_from_sets(list_of_sets)
+    assert clear_set == {'a', 'b', 'c'}
