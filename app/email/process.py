@@ -28,23 +28,16 @@ async def _get_subscribers(account_id: str, template_type: str):
 
 def aggregate(emails: List[EmailAggregation]) -> Dict[Any, dict]:
     aggregated = {}
-    duplicate_count = {}
     for e in emails:
         if e.account_id not in aggregated:
             aggregated[e.account_id] = {}
-            duplicate_count[e.account_id] = {}
 
-        payload = json.loads(e.payload)
-        for trigger in payload['triggerNames']:
-            if trigger in aggregated[e.account_id]:
-                count = aggregated[e.account_id][trigger]
-                if not (e.insight_id in duplicate_count[e.account_id] and
-                        trigger in duplicate_count[e.account_id][e.insight_id]):
-                    aggregated[e.account_id][trigger] = count + 1
-            else:
-                duplicate_count[e.account_id][e.insight_id] = {}
-                duplicate_count[e.account_id][e.insight_id][trigger] = 1
-                aggregated[e.account_id][trigger] = 1
+        payload: Notification = Notification(**json.loads(e.payload))
+        for trigger in payload.triggerNames:
+            if trigger not in aggregated[e.account_id]:
+                aggregated[e.account_id][trigger] = set()
+
+            aggregated[e.account_id][trigger].add(payload.insightId)
 
     return aggregated
 

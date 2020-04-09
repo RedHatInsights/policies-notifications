@@ -16,6 +16,10 @@ def datetimeformat(value, format='%d %b %H:%M UTC'):
     return value.strftime(format)
 
 
+def set_from_sets(list_of_sets):
+    return set().union(*list_of_sets)
+
+
 class TemplateEngine:
     def __init__(self) -> None:
         self._env: Environment = Environment(
@@ -25,6 +29,7 @@ class TemplateEngine:
         )
         self._env.filters['dateformat'] = dateformat
         self._env.filters['datetimeformat'] = datetimeformat
+        self._env.filters['set_from_sets'] = set_from_sets
 
     async def render(self, template_type: str, params: dict):
         params['now'] = datetime.now()

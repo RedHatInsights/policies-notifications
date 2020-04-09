@@ -35,9 +35,10 @@
                                         <table border="0" cellpadding="0" cellspacing="0" width="100%">
                                             <tbody>
                                                 <tr>
+                                                    {% set num_triggers = triggerNames | length %}
                                                     <td bgcolor="ffffff" style="padding:20px 20px 20px 20px;font-size:16px">
                                                         Policy trigger notification for <strong>{{ tags.display_name }}</strong>.<br>
-                                                        System checked in at {{ now | datetimeformat }} and triggered {{ triggerNames | length }} policies.
+                                                        System checked in at {{ now | datetimeformat }} and triggered {{ num_triggers }} {% if num_triggers == 1 %}policy{% else %}policies{% endif %}.
                                                     </td>
                                                 </tr>
                                                 <tr>
