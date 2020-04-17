@@ -17,7 +17,7 @@ class EmailSubscriptionConsumer:
         self.consumer = AIOKafkaConsumer(
             KAFKA_QUEUE_EMAIL, loop=loop, bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
             value_deserializer=lambda m: json.loads(m.decode('utf-8')), group_id='notifications',
-            enable_auto_commit=False)
+            enable_auto_commit=False, retry_backoff_ms=2000)
         self._running = False
         logger.info('Created EmailSubscriptionConsumer')
         self.processor = EmailProcessor()

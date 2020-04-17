@@ -18,7 +18,7 @@ class EventConsumer:
         self.consumer = AIOKafkaConsumer(
             KAFKA_QUEUE_HOOK, loop=loop, bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
             group_id="notifications", value_deserializer=lambda m: json.loads(m.decode('utf-8')),
-            enable_auto_commit=False)
+            enable_auto_commit=False, retry_backoff_ms=2000)
         self._running = False
         self.processor = WebhookProcessor()
 
@@ -37,7 +37,6 @@ class EventConsumer:
             async for msg in self.consumer:
                 try:
                     notification: Action = Action(**msg.value)
-                    logger.info('Received msg from Kafka: %s', notification.dict())
                     await self.processor.process(notification)
                     await self.consumer.commit()
                 except Exception as e:
