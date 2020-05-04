@@ -19,18 +19,17 @@ class EmailSubscriptionConsumer:
             value_deserializer=lambda m: json.loads(m.decode('utf-8')), group_id='notifications',
             enable_auto_commit=False, retry_backoff_ms=2000)
         self._running = False
-        logger.info('Created EmailSubscriptionConsumer')
         self.processor = EmailProcessor()
 
     async def start(self):
-        logger.info('EmailSubscriptionConsumer start called')
+        logger.info('EmailSubscriptionConsumer starting')
         await self.consumer.start()
         loop = asyncio.get_event_loop()
         loop.create_task(self.consume())
         self._running = True
 
     async def shutdown(self):
-        logger.info('EmailSubscriptionConsumer shutdown called')
+        logger.info('EmailSubscriptionConsumer shutting down')
         self._running = False
         await self.consumer.stop()
         self.processor.shutdown()
@@ -41,7 +40,6 @@ class EmailSubscriptionConsumer:
         await self.consumer.seek_to_committed()
 
     async def consume(self):
-        logger.info('Started consuming messages..')
         try:
             async for msg in self.consumer:
                 try:
@@ -53,4 +51,4 @@ class EmailSubscriptionConsumer:
                     await self.restart()
 
         finally:
-            logger.info('Stopped consuming messages')
+            pass

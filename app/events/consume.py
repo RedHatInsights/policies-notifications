@@ -23,12 +23,14 @@ class EventConsumer:
         self.processor = WebhookProcessor()
 
     async def start(self):
+        logger.info('EventConsumer starting')
         await self.consumer.start()
         loop = asyncio.get_event_loop()
         loop.create_task(self.consume())
         self._running = True
 
     async def shutdown(self):
+        logger.info('EventConsumer shutting down')
         self._running = False
         await self.consumer.stop()
 
@@ -44,4 +46,4 @@ class EventConsumer:
                     # await self.restart()
 
         finally:
-            logger.info('Stopped consuming messages')
+            pass
