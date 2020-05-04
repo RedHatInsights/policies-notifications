@@ -1,5 +1,6 @@
 # Standard library
 import logging
+import logging.config
 
 # Third-party
 from fastapi import FastAPI
@@ -10,12 +11,10 @@ from .db import conn
 from .events import consume, email
 from .core.config import TESTING
 
-consumer = consume.EventConsumer()
-email_consumer = email.EmailSubscriptionConsumer()
-
-logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+consumer = consume.EventConsumer()
+email_consumer = email.EmailSubscriptionConsumer()
 
 notif_app: FastAPI = FastAPI(title='Notifications backend', openapi_url='/api/v1/openapi.json', redoc_url=None)
 
@@ -24,6 +23,7 @@ notif_app: FastAPI = FastAPI(title='Notifications backend', openapi_url='/api/v1
 
 @notif_app.on_event("startup")
 async def startup_event():
+    logger.info('Starting Notifications backend')
     await conn.setup()
     if not TESTING:
         await consumer.start()
@@ -33,10 +33,12 @@ async def startup_event():
 
 @notif_app.on_event("shutdown")
 async def shutdown_event():
+    logger.info('Shutting down Notifications backend')
     await conn.shutdown()
     if not TESTING:
         await consumer.shutdown()
         await email_consumer.shutdown()
+    logger.info('Notifications backend shutdown complete')
 
 
 notif_app.include_router(apps.apps, tags=['Apps'])
