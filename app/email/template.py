@@ -12,7 +12,7 @@ def dateformat(value, format='%d %b %Y'):
     return value.strftime(format)
 
 
-def datetimeformat(value, format='%d %b %H:%M UTC'):
+def datetimeformat(value, format='%d %b %Y %H:%M UTC'):
     return value.strftime(format)
 
 

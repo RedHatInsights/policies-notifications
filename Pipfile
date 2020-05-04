@@ -13,7 +13,7 @@ flake8 = "*"
 pytest-asyncio = "*"
 
 [packages]
-fastapi = "==0.54.0"
+fastapi = "==0.54.1"
 uvicorn = "*"
 aiohttp = {extras = ["speedups"],version = "*"}
 asyncpg = "*"
