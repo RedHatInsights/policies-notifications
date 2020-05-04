@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c8074498fe540d83116513bf9bf9731056dc85dd794e59293d8b3a94c6261aeb"
+            "sha256": "0adaf7dd607f47f552d7621b431d6bdef461d6d70e1f5b7c0b18aa17911526ed"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -394,6 +394,12 @@
             ],
             "version": "==4.7.5"
         },
+        "prometheus-client": {
+            "hashes": [
+                "sha256:71cd24a2b3eb335cb800c7159f423df1bd4dcd5171b234be15e3f31ec9f622da"
+            ],
+            "version": "==0.7.1"
+        },
         "psycopg2": {
             "hashes": [
                 "sha256:132efc7ee46a763e68a815f4d26223d9c679953cd190f1f218187cb60decf535",
@@ -546,6 +552,14 @@
                 "sha256:a9bb130fa7aa736eda8a814b6ceb85ccf7a209ed53843d0d61e246b380afa10f"
             ],
             "version": "==0.13.2"
+        },
+        "starlette-prometheus": {
+            "hashes": [
+                "sha256:88e8c143f8d557b3a9c8885a1fd9ce649ce16e8453aac537f8551409aac92f4a",
+                "sha256:dc3ab5bf2e22c49d6ec55f2e81192bfbd316d6353187cc2c92ea49f04e41fc25"
+            ],
+            "index": "pypi",
+            "version": "==0.6.0"
         },
         "typing": {
             "hashes": [

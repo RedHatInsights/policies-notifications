@@ -3,6 +3,7 @@ import json
 import logging
 
 from aiokafka import AIOKafkaConsumer
+from prometheus_client import Counter
 
 from .models import Action
 from ..core.config import KAFKA_BOOTSTRAP_SERVERS, KAFKA_QUEUE_HOOK
@@ -12,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class EventConsumer:
+    failed_webhooks = Counter('webhook_processing_error', 'Failure count of webhook sends')
 
     def __init__(self):
         loop = asyncio.get_event_loop()
@@ -43,6 +45,7 @@ class EventConsumer:
                     await self.consumer.commit()
                 except Exception as e:
                     logger.error('Received error while trying to process webhook: %s', e)
+                    self.failed_webhooks.inc()
                     # await self.restart()
 
         finally:

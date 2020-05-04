@@ -4,6 +4,7 @@ import logging.config
 
 # Third-party
 from fastapi import FastAPI
+from starlette_prometheus import metrics, PrometheusMiddleware
 
 # Local
 from .routers import apps, endpoints
@@ -41,5 +42,7 @@ async def shutdown_event():
     logger.info('Notifications backend shutdown complete')
 
 
+notif_app.add_middleware(PrometheusMiddleware)
+notif_app.add_route("/metrics/", metrics)
 notif_app.include_router(apps.apps, tags=['Apps'])
 notif_app.include_router(endpoints.endpoints, tags=['Endpoints'])
