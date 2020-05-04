@@ -8,7 +8,7 @@ from apscheduler.triggers.cron import CronTrigger
 from asyncpg.exceptions import PostgresError
 
 from ..events.models import Notification
-from .template import TemplateEngine
+from .template import TemplateEngine, dateformat, datetimeformat, set_from_sets
 from .bop_service import BopSender
 from ..db import email as email_store, subscriptions
 from ..db.conn import db
@@ -42,6 +42,34 @@ def aggregate(emails: List[EmailAggregation]) -> Dict[Any, dict]:
     return aggregated
 
 
+def policies_systems(policies_count, systems_count) -> str:
+    policies_str = "policies" if policies_count > 1 else "policy"
+    systems_str = "systems" if systems_count > 1 else "system"
+
+    return policies_str, systems_str
+
+
+def daily_mail_topic(data: dict):
+    policies: dict = data['trigger_stats']
+    policies_count = len(policies.keys())
+    systems_count = len(set_from_sets(policies.values()))
+
+    policies_str, systems_str = policies_systems(policies_count, systems_count)
+    topic = "{} - {} {}} triggered on {} {}}".format(dateformat(data['start_time']), policies_str, policies_count,
+                                                     systems_count, systems_str)
+
+    return topic
+
+
+def instant_mail_topic(data: Notification):
+    policies_count = len(data.triggerNames)
+    policies_str, _ = policies_systems(policies_count, 0)
+
+    topic = '{} - {} {} triggered on {}'.format(datetimeformat(datetime.now()), policies_count, policies_str,
+                                                data.tags['display_name'])
+    return topic
+
+
 class EmailProcessor:
     INSTANT_TEMPLATE_KEY = 'policies-instant-mail'
     DAILY_TEMPLATE_KEY = 'policies-daily-mail'
@@ -57,11 +85,11 @@ class EmailProcessor:
     def shutdown(self):
         self.scheduler.shutdown(wait=False)
 
-    async def _send_to_subscribers(self, account_id: str, template_type: str, data: dict):
+    async def _send_to_subscribers(self, account_id: str, template_type: str, topic: str, data: dict):
         email = await self.rendering.render(template_type, data)
         receivers = await _get_subscribers(account_id, template_type)
 
-        await self.sender.send_email(email, receivers)
+        await self.sender.send_email(topic, email, receivers)
 
     async def process(self, notification: Notification):
         account_id: str = notification.tenantId
@@ -72,7 +100,8 @@ class EmailProcessor:
         try:
             async with db.transaction() as tx:
                 await email_store.insert_email(account_id, insight_id, data)
-                await self._send_to_subscribers(account_id, self.INSTANT_TEMPLATE_KEY, data)
+                await self._send_to_subscribers(account_id, self.INSTANT_TEMPLATE_KEY, instant_mail_topic(notification),
+                                                data)
                 tx.raise_commit()
         except PostgresError as e:
             logger.error('Failed to insert to database, fatal error - will not try again: {}'.format(e))
@@ -91,6 +120,8 @@ class EmailProcessor:
         for account_aggregate in aggregated_emails.items():
             account_id = account_aggregate[0]
             policies = account_aggregate[1]
+
             data: dict = {"trigger_stats": policies, 'start_time': start_time, 'end_time': end_time}
-            await self._send_to_subscribers(account_id, self.DAILY_TEMPLATE_KEY, data)
+
+            await self._send_to_subscribers(account_id, self.DAILY_TEMPLATE_KEY, daily_mail_topic(data), data)
             await email_store.remove_aggregations(start_time, end_time, account_id)

@@ -16,11 +16,11 @@ class BopSender:
     def __init__(self) -> None:
         self.headers = {"x-rh-apitoken": BOP_APITOKEN, "x-rh-clientid": BOP_CLIENT_ID, "x-rh-insights-env": BOP_ENV}
 
-    async def send_email(self, payload, receivers):
+    async def send_email(self, topic, payload, receivers):
         email_set: List[Email] = []
         if len(receivers) > 0:
             email: Email = Email(
-                subject='Policy Notification',
+                subject=topic,
                 bodyType='html',
                 recipients=receivers,
                 body=payload)
