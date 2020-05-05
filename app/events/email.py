@@ -3,6 +3,7 @@ import asyncio
 import logging
 
 from aiokafka import AIOKafkaConsumer
+from prometheus_client import Counter
 
 from .models import Notification
 from ..email.process import EmailProcessor
@@ -12,6 +13,8 @@ logger = logging.getLogger(__name__)
 
 
 class EmailSubscriptionConsumer:
+    consumer_restarts = Counter('email_consumer_restarts', 'Restart count of Email consumer')
+
     def __init__(self):
         loop = asyncio.get_event_loop()
         self.consumer = AIOKafkaConsumer(
@@ -36,6 +39,7 @@ class EmailSubscriptionConsumer:
 
     async def restart(self):
         logger.info('Rolling back the Kafka seek position after 10 second sleep')
+        self.consumer_restarts.inc()
         await asyncio.sleep(10)
         await self.consumer.seek_to_committed()
 

@@ -6,6 +6,7 @@ from datetime import date, timedelta, datetime
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from asyncpg.exceptions import PostgresError
+from prometheus_client import Counter
 
 from ..events.models import Notification
 from .template import TemplateEngine, dateformat, datetimeformat, set_from_sets
@@ -71,6 +72,7 @@ def instant_mail_topic(data: Notification):
 
 
 class EmailProcessor:
+    postgres_errors = Counter('postgres_insert_errors', 'Unrecoverable errors when inserting to Postgres')
     INSTANT_TEMPLATE_KEY = 'policies-instant-mail'
     DAILY_TEMPLATE_KEY = 'policies-daily-mail'
 
@@ -105,6 +107,7 @@ class EmailProcessor:
                 tx.raise_commit()
         except PostgresError as e:
             logger.error('Failed to insert to database, fatal error - will not try again: {}'.format(e))
+            self.postgres_errors.inc()
 
     async def daily_mail(self):
         today = date.today()

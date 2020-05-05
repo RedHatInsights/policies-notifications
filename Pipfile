@@ -24,6 +24,7 @@ apscheduler = "*"
 alembic = "*"
 psycopg2 = "*"
 importlib-metadata = "*"
+starlette-prometheus = "*"
 
 [requires]
 python_version = "3.6"
