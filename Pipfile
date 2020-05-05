@@ -23,6 +23,7 @@ jinja2 = "*"
 apscheduler = "*"
 alembic = "*"
 psycopg2 = "*"
+importlib-metadata = "*"
 
 [requires]
 python_version = "3.6"

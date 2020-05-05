@@ -7,7 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.8]
+        python-version: [3.6]
+        # pipenv sets the env to correct Python version (3.6)
+#        , 3.8]
     # Service containers to run with `container-job`
     services:
       # Label used to access the service container
