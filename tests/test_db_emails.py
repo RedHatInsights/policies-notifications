@@ -5,13 +5,10 @@ import pytest
 
 import app.db.email as email_store
 from app.db.schemas import EmailAggregation
-import app.db.conn as conn
 
 
 @pytest.mark.asyncio
-async def test_email_aggregation():
-    await conn.setup()
-
+async def test_email_aggregation(client):
     await email_store.insert_email('test_account', 'insight_id_1', {'time': 'now'})
 
     # Fetching for future
@@ -29,4 +26,3 @@ async def test_email_aggregation():
     assert 'test_account' == first_mail.account_id
 
     await email_store.remove_aggregations(tomorrow, today, 'test_account')
-    await conn.shutdown()
