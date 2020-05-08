@@ -1,5 +1,5 @@
 import logging
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Set, Tuple
 import json
 from datetime import date, timedelta, datetime
 
@@ -8,6 +8,7 @@ from apscheduler.triggers.cron import CronTrigger
 from asyncpg.exceptions import PostgresError
 from prometheus_client import Counter
 
+from ..core.errors import BOPInvalidRecipientException
 from ..events.models import Notification
 from .template import TemplateEngine, dateformat, datetimeformat, set_from_sets
 from .bop_service import BopSender
@@ -18,11 +19,11 @@ from ..db.schemas import EmailAggregation
 logger = logging.getLogger(__name__)
 
 
-async def _get_subscribers(account_id: str, template_type: str):
+async def _get_subscribers(account_id: str, template_type: str) -> Set[str]:
     subscribers = await subscriptions.get_subscribers(account_id, template_type)
-    receivers = []
+    receivers = set()
     for s in subscribers:
-        receivers.append(s.user_id)
+        receivers.add(s.user_id)
 
     return receivers
 
@@ -43,14 +44,14 @@ def aggregate(emails: List[EmailAggregation]) -> Dict[Any, dict]:
     return aggregated
 
 
-def policies_systems(policies_count, systems_count) -> str:
+def policies_systems(policies_count, systems_count) -> Tuple[str, str]:
     policies_str = "policies" if policies_count > 1 else "policy"
     systems_str = "systems" if systems_count > 1 else "system"
 
     return policies_str, systems_str
 
 
-def daily_mail_topic(data: dict):
+def daily_mail_topic(data: dict) -> str:
     policies: dict = data['trigger_stats']
     policies_count = len(policies.keys())
     systems_count = len(set_from_sets(policies.values()))
@@ -62,7 +63,7 @@ def daily_mail_topic(data: dict):
     return topic
 
 
-def instant_mail_topic(data: Notification):
+def instant_mail_topic(data: Notification) -> str:
     policies_count = len(data.triggerNames)
     policies_str, _ = policies_systems(policies_count, 0)
 
@@ -91,7 +92,16 @@ class EmailProcessor:
         email = await self.rendering.render(template_type, data)
         receivers = await _get_subscribers(account_id, template_type)
 
-        await self.sender.send_email(topic, email, receivers)
+        try:
+            await self.sender.send_email(topic, email, receivers)
+        except BOPInvalidRecipientException as e:
+            # This shouldn't cause deeper recursion if the BOP service's behavior isn't changed, the first call
+            # should return all the failed matches
+            logger.error(
+                'Invalid recipients {} for account {}'.format(e.invalid_recipients, account_id))
+            receivers = receivers.difference(e.invalid_recipients)
+            if len(receivers) > 0:
+                await self.sender.send_email(topic, email, receivers)
 
     async def process(self, notification: Notification):
         account_id: str = notification.tenantId

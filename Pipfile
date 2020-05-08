@@ -11,13 +11,14 @@ requests = "*"
 pytest = "*"
 flake8 = "*"
 pytest-asyncio = "*"
+pytest-aiohttp = "*"
 
 [packages]
 fastapi = "==0.54.1"
 uvicorn = "*"
 aiohttp = {extras = ["speedups"],version = "*"}
 asyncpg = "*"
-gino = "*"
+gino = {extras = ["starlette"],version = "*"}
 robinhood-aiokafka = "*"
 jinja2 = "*"
 apscheduler = "*"

@@ -1,17 +1,9 @@
 import logging
 
-from gino import Gino
+from gino.ext.starlette import Gino
 
-from ..core.config import DATABASE_URL
+from ..core.config import DB_DSN
 
 logging.getLogger('gino.engine').setLevel(logging.ERROR)
 
-db = Gino()
-
-
-async def setup():
-    await db.set_bind(str(DATABASE_URL), echo=False)
-
-
-async def shutdown():
-    await db.pop_bind().close()
+db = Gino(dsn=DB_DSN, echo=False)
