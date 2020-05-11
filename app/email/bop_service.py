@@ -26,7 +26,7 @@ class BopSender:
             email: Email = Email(
                 subject=topic,
                 bodyType='html',
-                recipients=[],
+                recipients=['no-reply@redhat.com'],
                 bccList=receivers,
                 ccList=[],
                 body=payload)
