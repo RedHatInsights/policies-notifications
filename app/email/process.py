@@ -57,7 +57,7 @@ def daily_mail_topic(data: dict) -> str:
     systems_count = len(set_from_sets(policies.values()))
 
     policies_str, systems_str = policies_systems(policies_count, systems_count)
-    topic = "{} - {} {} triggered on {} {}".format(dateformat(data['start_time']), policies_str, policies_count,
+    topic = "{} - {} {} triggered on {} {}".format(dateformat(data['start_time']), policies_count, policies_str,
                                                    systems_count, systems_str)
 
     return topic
