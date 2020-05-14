@@ -40,7 +40,6 @@ class EventConsumer:
         try:
             async for msg in self.consumer:
                 try:
-                    print('Received: {}'.format(msg.value))
                     notification: Action = Action(**msg.value)
                     await self.processor.process(notification)
                 except Exception as e:

@@ -15,15 +15,15 @@ endpoints = APIRouter()
 async def get_endpoints(identity: Credentials = Depends(decode_identity_header)):
     # Depends on security with the account_id
     db_endpoints = await endpoint_db.get_endpoints(account_id=identity.account_number)
-    print(len(db_endpoints))
+    if db_endpoints is None or len(db_endpoints) < 1:
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail='No endpoints found')
+
     return db_endpoints
 
 
 @endpoints.post("/endpoints", status_code=204)
 async def create_endpoint(endpoint: Endpoint, identity: Credentials = Depends(decode_identity_header)):
     # TODO This returns 204.. should probably return the created Endpoint with the generated id
-    import json
-    print('Storing endpoint: {}'.format(json.dumps(endpoint.dict())))
     try:
         await endpoint_db.create_endpoint(account_id=identity.account_number, endpoint=endpoint)
     except Exception as e:
@@ -72,7 +72,11 @@ async def unsubscribe_email_endpoint(event_type: str, identity: Credentials = De
 
 @endpoints.get("/endpoints/{id}", response_model=EndpointOut)
 async def get_endpoint(id: str, identity: Credentials = Depends(decode_identity_header)):
-    return await endpoint_db.get_endpoint(account_id=identity.account_number, id=id)
+    endpoint = await endpoint_db.get_endpoint(account_id=identity.account_number, id=id)
+    if endpoint is None:
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail='No endpoint found')
+
+    return endpoint
 
 
 @endpoints.delete("/endpoints/{id}", status_code=204)

@@ -11,8 +11,9 @@ logger = logging.getLogger(__name__)
 """
     TODO: Retry in case of temporary errors
     TOOD: Disable the endpoint if the error can't be retried - user must manually fix the issue
-    TODO: Concurrency? Here or consume?    
+    TODO: Concurrency? Here or consume?
 """
+
 
 def request_tracer(results_collector):
     async def on_request_start(session, context, params):
@@ -34,7 +35,9 @@ def request_tracer(results_collector):
             'url': str(params.url),
             'error': type(params.exception).__name__
         }
-        # exception=ClientConnectorError(ConnectionKey(host='webhssssssook.site', port=443, is_ssl=True, ssl=None, proxy=None, proxy_auth=None, proxy_headers_hash=-1738310210140354566), gaierror(-2, 'Name or service not known')))
+        # exception=ClientConnectorError(ConnectionKey(host='webhssssssook.site', port=443, is_ssl=True, ssl=None,
+        # proxy=None, proxy_auth=None, proxy_headers_hash=-1738310210140354566),
+        # gaierror(-2, 'Name or service not known')))
         # Might have strerror
 
     trace_config = aiohttp.TraceConfig()

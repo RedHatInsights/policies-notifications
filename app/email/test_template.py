@@ -57,9 +57,8 @@ async def test_with_japanese_characters():
     notification: Notification = Notification(tenantId='test', insightId='1', tags=tags, triggerNames=trigger_names)
     notif_dict = notification.dict()
     notif_dict['now'] = datetime.now()
-    rendered = await engine.render('policies-instant-mail', notif_dict)
-    # Assert that it contains the mentioned characters
-    print(rendered)
+    await engine.render('policies-instant-mail', notif_dict)
+    # TODO Assert that it contains the mentioned characters
 
 
 def test_set_of_sets():

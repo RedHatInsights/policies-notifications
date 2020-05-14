@@ -66,7 +66,7 @@ class EndpointOut(Endpoint):
 
 
 class EndpointResponse(Endpoint):
-    # id: UUID
+    id: UUID
     # accountID: str  # This is DB only - not response / request model
     # created: datetime
     # modified: datetime

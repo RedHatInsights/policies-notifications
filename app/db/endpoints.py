@@ -1,6 +1,7 @@
 from typing import List
 
-from ..models.endpoints import Endpoint as EndpointCreate, EndpointResponse, WebhookAttributes, NotificationHistory as NotificationHistoryCreate
+from ..models.endpoints import Endpoint as EndpointCreate, EndpointResponse, WebhookAttributes,\
+    NotificationHistory as NotificationHistoryCreate
 from .schemas import Endpoint, WebhookEndpoint, NotificationHistory
 
 
@@ -12,13 +13,12 @@ async def get_endpoints(account_id: str):
         .join(WebhookEndpoint).select()
     endpoints: List[Endpoint] = await q.gino.load(
         Endpoint.load(properties=WebhookEndpoint, id=WebhookEndpoint.endpoint_id)).all()
-    
+
     return endpoints
 
 
 async def create_endpoint(account_id: str, endpoint: EndpointCreate):
     # Here we need to parse the attributestype also.. is it webhook or email?
-    print('Name: {}'.format(endpoint.name))
     endpoint_dict = endpoint.dict()
     endpoint_dict.pop('properties', None)
     endpoint_row = Endpoint(**endpoint_dict)
@@ -37,9 +37,11 @@ async def create_endpoint(account_id: str, endpoint: EndpointCreate):
 
 
 async def get_endpoint(account_id: str, id: str):
-    print('get_endpoint')
     # TODO This could return 0 hits also.. stop processing in that case.
-    endpoint = await Endpoint.query.where((Endpoint.account_id == account_id) & (Endpoint.id == id)).gino.one()
+    endpoint = await Endpoint.query.where((Endpoint.account_id == account_id) & (Endpoint.id == id)).gino.first()
+    if endpoint is None:
+        return None
+
     if endpoint.endpoint_type == 1:
         # TODO This could be a JOIN query also, but works fine this way as well (see get_endpoints)
         webhook: WebhookEndpoint = await WebhookEndpoint.query.where(WebhookEndpoint.endpoint_id == endpoint.id)\

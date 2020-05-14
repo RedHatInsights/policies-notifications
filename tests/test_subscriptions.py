@@ -1,5 +1,3 @@
-import json
-
 from .tools import create_identity_header, create_broken_identity_header
 
 
@@ -47,7 +45,7 @@ def test_subscriptions_auth(client):
 def test_webhooks(client):
     headers = {'x-rh-identity': create_identity_header('000001', 'test_user').decode()}
 
-    print('Header: {}'.format(headers))
+    # print('Header: {}'.format(headers))
 
     payload = {
         'name': 'Test endpoint',
@@ -63,7 +61,7 @@ def test_webhooks(client):
 
     response = client.post("/endpoints", headers=headers, json=payload)
     # TODO Test that 400 (422) is correctly used if there's a validation error in the data
-    print(response.json())
+    # print(response.json())
     # TODO Fix to 200 and check the returned data
     assert response.status_code == 204
 
@@ -86,7 +84,3 @@ def test_webhooks(client):
 
     json_payload = response.json()
     assert len(json_payload) == 0
-
-    """
-    ## https://webhook.site/bca343cf-c11c-4125-b065-22e1411a73e0
-    """
