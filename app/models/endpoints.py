@@ -1,5 +1,5 @@
 # Standard library
-from typing import Union
+from typing import Union, Optional
 from enum import Enum, IntEnum
 from uuid import UUID
 
@@ -44,7 +44,7 @@ class EmailAttributes(Attributes):
 # Base endpoint definition
 class Endpoint(BaseModel):
     # endpoint_type: EndpointType
-    name: str = None
+    name: str
     description: str = None
     enabled: bool = False
     # endpoint_type: int = 1
@@ -55,21 +55,13 @@ class Endpoint(BaseModel):
     #     orm_mode = True
 
 
-class EndpointOut(Endpoint):
-    id: UUID
-    # endpoint_type: int # This has to be converted back to string..
-
-    properties: WebhookOut
-
-    class Config:
-        orm_mode = True
-
-
 class EndpointResponse(Endpoint):
     id: UUID
     # accountID: str  # This is DB only - not response / request model
     # created: datetime
     # modified: datetime
+    # endpoint_type: int # This has to be converted back to string..
+    properties: Optional[WebhookOut]
 
     class Config:
         orm_mode = True

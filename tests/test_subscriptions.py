@@ -59,12 +59,20 @@ def test_webhooks(client):
         }
     }
 
+    # Test correct create
     response = client.post("/endpoints", headers=headers, json=payload)
-    # TODO Test that 400 (422) is correctly used if there's a validation error in the data
-    # print(response.json())
-    # TODO Fix to 200 and check the returned data
-    assert response.status_code == 204
+    assert response.status_code == 201
+    json_payload = response.json()
+    assert json_payload is not None
+    assert json_payload['id'] is not None
+    assert json_payload['properties'] is not None
 
+    # Test a missing field
+    payload.pop('name')
+    response = client.post("/endpoints", headers=headers, json=payload)
+    assert response.status_code == 422  # 422 is when model can't be accepted (validation error etc)
+
+    # Get endpoints
     response = client.get("/endpoints", headers=headers)
     assert response.status_code == 200
 
@@ -74,11 +82,22 @@ def test_webhooks(client):
     id = json_payload[0]['id']
     assert id is not None
 
+    # Get a single endpoint
     response = client.get("/endpoints/{}".format(id), headers=headers)
     json_payload = response.json()
     assert json_payload is not None
     assert json_payload['id'] == id
 
+    # Get non-UUID endpoint
+    response = client.get("/endpoints/{}".format('not_here'), headers=headers)
+    assert response.status_code == 400
+    print(response.text)
+
+    # Get hopefully non-existant endpoint
+    response = client.get("/endpoints/{}".format('c79a9247-6253-48f8-b09f-b166309d0415'), headers=headers)
+    assert response.status_code == 404
+
+    # Get endpoint's empty history
     response = client.get("/endpoints/{}/history".format(id), headers=headers)
     assert response.status_code == 200
 

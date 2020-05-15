@@ -1,15 +1,16 @@
 from typing import List
 
-from ..models.endpoints import Endpoint as EndpointCreate, EndpointResponse, WebhookAttributes,\
+from asyncpg.exceptions import DataError
+
+from ..db.conn import db
+from ..core.errors import InvalidInputException
+from ..models.endpoints import Endpoint as EndpointCreate, EndpointResponse, WebhookAttributes, \
     NotificationHistory as NotificationHistoryCreate
 from .schemas import Endpoint, WebhookEndpoint, NotificationHistory
 
 
 async def get_endpoints(account_id: str):
-    # SELECT e. *, w. * FROM public.endpoints AS e
-    # LEFT OUTER JOIN public.endpoint_webhooks AS w ON(w.endpoint_id = e.id AND e.endpoint_type = 1)
-
-    q = Endpoint.query.where((Endpoint.account_id == account_id) & (Endpoint.endpoint_type == 1)).alias()\
+    q = Endpoint.query.where((Endpoint.account_id == account_id) & (Endpoint.endpoint_type == 1)).alias() \
         .join(WebhookEndpoint).select()
     endpoints: List[Endpoint] = await q.gino.load(
         Endpoint.load(properties=WebhookEndpoint, id=WebhookEndpoint.endpoint_id)).all()
@@ -17,7 +18,7 @@ async def get_endpoints(account_id: str):
     return endpoints
 
 
-async def create_endpoint(account_id: str, endpoint: EndpointCreate):
+async def create_endpoint(account_id: str, endpoint: EndpointCreate) -> EndpointResponse:
     # Here we need to parse the attributestype also.. is it webhook or email?
     endpoint_dict = endpoint.dict()
     endpoint_dict.pop('properties', None)
@@ -33,20 +34,25 @@ async def create_endpoint(account_id: str, endpoint: EndpointCreate):
         attributes: WebhookAttributes = endpoint.properties
         webhook: WebhookEndpoint = WebhookEndpoint(**attributes.dict())
         webhook.endpoint_id = endpoint_row.id
-        await webhook.create()
+        properties = await webhook.create()
+
+    response: EndpointResponse = EndpointResponse.from_orm(endpoint_row)
+    response.properties = properties
+    return response
 
 
 async def get_endpoint(account_id: str, id: str):
-    # TODO This could return 0 hits also.. stop processing in that case.
-    endpoint = await Endpoint.query.where((Endpoint.account_id == account_id) & (Endpoint.id == id)).gino.first()
+    try:
+        endpoint = await Endpoint.query.where((Endpoint.account_id == account_id) & (Endpoint.id == id)).gino.first()
+    except DataError as e:
+        raise InvalidInputException(e)
+
     if endpoint is None:
         return None
 
     if endpoint.endpoint_type == 1:
-        # TODO This could be a JOIN query also, but works fine this way as well (see get_endpoints)
-        webhook: WebhookEndpoint = await WebhookEndpoint.query.where(WebhookEndpoint.endpoint_id == endpoint.id)\
+        webhook: WebhookEndpoint = await WebhookEndpoint.query.where(WebhookEndpoint.endpoint_id == endpoint.id) \
             .gino.one()
-        # ep: EndpointResponse = EndpointResponse(**endpoint.__dict__)
         ep = EndpointResponse.from_orm(endpoint)
         ep.properties = webhook
         return ep
@@ -68,11 +74,23 @@ async def update_endpoint(account_id: str, id: str, endpoint: EndpointCreate):
 
 async def create_history_event(notif_history: NotificationHistoryCreate):
     notif_history_row: NotificationHistory = NotificationHistory(**notif_history.dict())
+    # TODO Return the history?
     await notif_history_row.create()
 
 
 async def get_endpoint_history(account_id: str, endpoint_id: str):
-    notif_history = await NotificationHistory.query.where((NotificationHistory.account_id == account_id) &
-                                                          (NotificationHistory.endpoint_id == endpoint_id))\
-        .gino.all()
+    notif_history = await db.select(
+        [NotificationHistory.id, NotificationHistory.invocation_result, NotificationHistory.invocation_time,
+         NotificationHistory.created]) \
+        .where((NotificationHistory.account_id == account_id) & (NotificationHistory.endpoint_id == endpoint_id)) \
+        .order_by(NotificationHistory.id.desc()) \
+        .gino.model(NotificationHistory).all()
+
     return notif_history
+
+
+async def get_endpoint_history_details(account_id: str, endpoint_id: str, history_id: int):
+    details = await db.select([NotificationHistory.details])\
+        .where((NotificationHistory.account_id == account_id) & (NotificationHistory.endpoint_id == endpoint_id) &
+               (NotificationHistory.id == history_id)).gino.load(NotificationHistory.details).first()
+    return details
