@@ -2,6 +2,7 @@
 from typing import Union, Optional
 from enum import Enum, IntEnum
 from uuid import UUID
+from datetime import datetime
 
 # Third-party
 from pydantic import BaseModel, HttpUrl, Field
@@ -25,8 +26,8 @@ class Attributes(BaseModel):
 class WebhookAttributes(Attributes):
     url: HttpUrl
     method: HttpType = HttpType.GET
-    disable_ssl_verification: bool
-    secret_token: str
+    disable_ssl_verification: bool = False
+    secret_token: Optional[str]
     # payload_transformer: str
     # timeout? SSL?
     # Request headers
@@ -58,7 +59,7 @@ class Endpoint(BaseModel):
 class EndpointResponse(Endpoint):
     id: UUID
     # accountID: str  # This is DB only - not response / request model
-    # created: datetime
+    created: datetime
     # modified: datetime
     # endpoint_type: int # This has to be converted back to string..
     properties: Optional[WebhookOut]
@@ -91,13 +92,7 @@ class NotificationHistory(BaseModel):
 
 class NotificationHistoryOut(NotificationHistory):
     id: str
-
-    class Config:
-        orm_mode = True
-
-
-class NotificationDetails(BaseModel):
-    code: int
+    created: datetime
 
     class Config:
         orm_mode = True
