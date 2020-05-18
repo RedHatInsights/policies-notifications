@@ -72,3 +72,5 @@ jobs:
           BOP_APITOKEN: none
           BOP_ENV: ci
           BOP_CLIENT_ID: policies
+          RBAC_APP_NAME: policies
+          RBAC_URL: https://localhost
