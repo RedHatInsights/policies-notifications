@@ -22,6 +22,6 @@ class NoTemplateFoundException(Exception):
 class RbacException(Exception):
     pass
 
+
 class InvalidInputException(Exception):
     pass
-
