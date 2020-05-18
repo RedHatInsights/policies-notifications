@@ -17,7 +17,8 @@ depends_on = None
 
 
 def upgrade():
-    op.create_foreign_key('FK_endpoint_id_webhooks', 'endpoint_webhooks', 'endpoints', ['endpoint_id'], ['id'])
+    op.create_foreign_key('FK_endpoint_id_webhooks', 'endpoint_webhooks', 'endpoints', ['endpoint_id'], ['id'],
+                          ondelete='CASCADE')
     op.drop_column('endpoint_webhooks', 'payload_transformer')
 
 

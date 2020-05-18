@@ -60,12 +60,8 @@ async def get_endpoint(account_id: str, id: str):
     return endpoint
 
 
-async def delete_endpoint(account_id: str, id: str):
-    endpoint = await Endpoint.query.where((Endpoint.account_id == account_id) & (Endpoint.id == id)).gino.status()
-    if endpoint.endpoint_type == 1:
-        # Delete WebhookEndpoint first, then the Endpoint
-        # TODO Or add CASCADE to DB definition to simplify deletes?
-        pass
+async def delete_endpoint(account_id: str, id: str) -> bool:
+    await Endpoint.delete.where((Endpoint.account_id == account_id) & (Endpoint.id == id)).gino.status()
 
 
 async def update_endpoint(account_id: str, id: str, endpoint: EndpointCreate):

@@ -79,14 +79,13 @@ async def get_endpoint(id: str, identity: Credentials = Depends(decode_identity_
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=str(e))
 
     if endpoint is None:
-        raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail='No endpoint found')
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail='No endpoint {} found'.format(id))
 
     return endpoint
 
 
 @endpoints.delete("/endpoints/{id}", status_code=204)
 async def delete_endpoint(id: str, identity: Credentials = Depends(decode_identity_header)):
-    # TODO Should we report 404 or just ignore it? (Repeatable delete)
     await endpoint_db.delete_endpoint(identity.account_number, id)
 
 
@@ -99,11 +98,17 @@ async def update_endpoint(id: str, endpoint: Endpoint, identity: Credentials = D
 async def get_endpoint_history(id: str, identity: Credentials = Depends(decode_identity_header)):
     # TODO Add here get notification_history for an endpoint..
     # TODO Add Pagination support to this and other endpoints..
-    return await endpoint_db.get_endpoint_history(identity.account_number, id)
+    history = await endpoint_db.get_endpoint_history(identity.account_number, id)
+    if history is None:
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail='No history found for id {}'.format(id))
+
+    return history
 
 
 @endpoints.get("/endpoints/{id}/history/{history_id}")
 async def get_endpoint_history_full_details(id: str, history_id: int, identity: Credentials = Depends(decode_identity_header)):
-    # TODO Should the details be a separate REST-call? Avoids returning too much data for the table call
-    print('================================== DETAILS =========================================')
-    return await endpoint_db.get_endpoint_history_details(identity.account_number, id, history_id)
+    details = await endpoint_db.get_endpoint_history_details(identity.account_number, id, history_id)
+    if details is None:
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail='No details found for history id {}'.format(history_id))
+
+    return details
