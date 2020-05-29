@@ -9,12 +9,14 @@ from asyncpg.exceptions import PostgresError
 from prometheus_client import Counter
 
 from ..core.errors import BOPInvalidRecipientException
+from ..models.auth import Credentials
 from ..events.models import Notification
 from .template import TemplateEngine, dateformat, datetimeformat, set_from_sets
 from .bop_service import BopSender
 from ..db import email as email_store, subscriptions
 from ..db.conn import db
 from ..db.schemas import EmailAggregation
+from ..integ.rbac import verify_access
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +25,9 @@ async def _get_subscribers(account_id: str, template_type: str) -> Set[str]:
     subscribers = await subscriptions.get_subscribers(account_id, template_type)
     receivers = set()
     for s in subscribers:
-        receivers.add(s.user_id)
+        has_rights = await verify_access(Credentials(account_number=account_id, username=s.user_id), 'policies')
+        if has_rights:
+            receivers.add(s.user_id)
 
     return receivers
 

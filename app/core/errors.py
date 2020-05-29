@@ -17,3 +17,7 @@ class BOPInvalidRecipientException(BOPException):
 
 class NoTemplateFoundException(Exception):
     pass
+
+
+class RbacException(Exception):
+    pass

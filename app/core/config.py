@@ -34,3 +34,7 @@ BOP_URL = config.get('BOP_URL')
 BOP_APITOKEN = config('BOP_APITOKEN')
 BOP_CLIENT_ID = config('BOP_CLIENT_ID')
 BOP_ENV = config('BOP_ENV')
+RBAC_URL = config('RBAC_URL')
+RBAC_APP_NAME = config('RBAC_APP_NAME')
+RBAC_ENDPOINT_URL = '{}/api/rbac/v1/access/?application={}'.format(RBAC_URL, RBAC_APP_NAME)
+X_RH_IDENTITY_HEADER_NAME = 'x-rh-identity'
