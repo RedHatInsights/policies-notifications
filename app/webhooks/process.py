@@ -52,7 +52,7 @@ def request_tracer(results_collector):
 class WebhookProcessor:
     timeout = aiohttp.ClientTimeout(total=3)
 
-    async def _call_webhook(self, properties: WebhookAttributes, payload: dict) -> NotificationHistory:
+    async def _call_webhook(self, properties: WebhookAttributes, payload: dict) -> dict:
         if properties.disable_ssl_verification:
             ssl_verification = False
         else:

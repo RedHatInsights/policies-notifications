@@ -29,15 +29,15 @@ async def create_endpoint(account_id: str, endpoint: EndpointCreate) -> Endpoint
         endpoint_row.endpoint_type = 1
 
     endpoint_row = await endpoint_row.create()
+    response: EndpointResponse = EndpointResponse.from_orm(endpoint_row)
 
     if isinstance(endpoint.properties, WebhookAttributes):
         attributes: WebhookAttributes = endpoint.properties
         webhook: WebhookEndpoint = WebhookEndpoint(**attributes.dict())
         webhook.endpoint_id = endpoint_row.id
         properties = await webhook.create()
+        response.properties = properties
 
-    response: EndpointResponse = EndpointResponse.from_orm(endpoint_row)
-    response.properties = properties
     return response
 
 
@@ -60,7 +60,7 @@ async def get_endpoint(account_id: str, id: str):
     return endpoint
 
 
-async def delete_endpoint(account_id: str, id: str) -> bool:
+async def delete_endpoint(account_id: str, id: str):
     await Endpoint.delete.where((Endpoint.account_id == account_id) & (Endpoint.id == id)).gino.status()
 
 

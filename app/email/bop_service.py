@@ -54,7 +54,7 @@ class BopSender:
                     raise BOPException('Error code: {}, error message: {}'.format(resp.status, text))
 
     async def shutdown(self):
-        await self.session.close()
+        pass
 
 
 class Email(BaseModel):
