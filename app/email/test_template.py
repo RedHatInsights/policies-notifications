@@ -8,7 +8,6 @@ from ..events.models import Notification
 from .template import TemplateEngine, set_from_sets
 from .process import daily_mail_topic
 
-
 @pytest.mark.asyncio
 async def test_template_render_missing_params():
     with pytest.raises(UndefinedError):

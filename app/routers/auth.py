@@ -1,14 +1,17 @@
 import base64
 import json
 
+from pydantic import BaseModel
 from fastapi import Depends, HTTPException
 from fastapi.security import APIKeyHeader
 from starlette.status import HTTP_401_UNAUTHORIZED
 
-from ..models.auth import Credentials
-from ..core.config import X_RH_IDENTITY_HEADER_NAME
+X_RH_IDENTITY = APIKeyHeader(name='x-rh-identity')
 
-X_RH_IDENTITY = APIKeyHeader(name=X_RH_IDENTITY_HEADER_NAME)
+
+class Credentials(BaseModel):
+    account_number: str
+    username: str
 
 
 def decode_identity_header(x_rh_identity: str = Depends(X_RH_IDENTITY)):
