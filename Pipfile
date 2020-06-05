@@ -6,7 +6,6 @@ verify_ssl = true
 [dev-packages]
 pylint = "*"
 autopep8 = "*"
-apscheduler = "*"
 requests = "*"
 pytest = "*"
 flake8 = "*"

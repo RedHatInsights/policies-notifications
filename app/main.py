@@ -10,6 +10,7 @@ from .routers import apps, endpoints
 from .db.conn import db
 from .events import consume, email
 from .core.config import TESTING
+from .core.logging import PrometheusAccessLogFilter
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +25,7 @@ def get_app() -> FastAPI:
     db.init_app(notif_app)
 
     notif_app.add_middleware(PrometheusMiddleware)
-    notif_app.add_route("/metrics/", metrics)
+    notif_app.add_route("/metrics", metrics)
     notif_app.include_router(apps.apps, tags=['Apps'])
     notif_app.include_router(endpoints.endpoints, tags=['Endpoints'])
 
@@ -49,4 +50,10 @@ def get_app() -> FastAPI:
     return notif_app
 
 
+def config_logging():
+    p = PrometheusAccessLogFilter()
+    logging.getLogger('uvicorn.access').addFilter(p)
+
+
 notif_app = get_app()
+config_logging()
