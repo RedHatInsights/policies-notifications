@@ -16,4 +16,4 @@ class Credentials(BaseModel):
             return self.orig_header
         identity = {'identity': {'user': {'username': self.username}, 'account_number': self.account_number}}
         json_identity = json.dumps(identity).encode('utf-8')
-        return b64encode(json_identity)
+        return b64encode(json_identity).decode()
