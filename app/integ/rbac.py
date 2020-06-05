@@ -1,3 +1,4 @@
+import logging
 import json
 
 import aiohttp
@@ -6,6 +7,8 @@ from ..core.config import RBAC_ENDPOINT_URL
 from ..core.errors import RbacException
 from ..routers.auth import X_RH_IDENTITY_HEADER_NAME
 from ..models.auth import Credentials
+
+logger = logging.getLogger(__name__)
 
 """
 TODO Add short TTL caching for these RBAC requests (otherwise emails might spam it..)
@@ -23,11 +26,13 @@ async def get_rbac_permissions_for_identity(identity: Credentials):
                     json_payload = await resp.json()
                     return json.loads(json_payload['data'])
 
-    except Exception:
+    except Exception as e:
+        logger.error('Calling Rbac threw an exception, ', e)
         pass
 
     # For any other situation than resp.status == 200
-    raise RbacException('Could not validate user')
+    error_msg = 'Could not validate user, rbac responded with code {}'.format(resp.status)
+    raise RbacException(error_msg)
 
 
 async def verify_access(identity: Credentials, app_permission: str) -> bool:
