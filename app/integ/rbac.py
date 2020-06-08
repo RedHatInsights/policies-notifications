@@ -24,7 +24,7 @@ async def get_rbac_permissions_for_identity(identity: Credentials):
                 if resp.status == 200:
                     # Auth succeeded, return payload
                     json_payload = await resp.json()
-                    return json.loads(json_payload['data'])
+                    return json_payload['data']
 
     except Exception as e:
         logger.error('Calling Rbac threw an exception, ', e)
