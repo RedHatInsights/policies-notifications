@@ -1,7 +1,8 @@
 # Standard library
-from typing import Union
+from typing import Union, Optional
 from enum import Enum, IntEnum
 from uuid import UUID
+from datetime import datetime
 
 # Third-party
 from pydantic import BaseModel, HttpUrl, Field
@@ -25,9 +26,9 @@ class Attributes(BaseModel):
 class WebhookAttributes(Attributes):
     url: HttpUrl
     method: HttpType = HttpType.GET
-    disable_ssl_verification: bool
-    secret_token: str
-    payload_transformer: str
+    disable_ssl_verification: bool = False
+    secret_token: Optional[str]
+    # payload_transformer: str
     # timeout? SSL?
     # Request headers
 
@@ -44,33 +45,24 @@ class EmailAttributes(Attributes):
 # Base endpoint definition
 class Endpoint(BaseModel):
     # endpoint_type: EndpointType
-    name: str = None
+    name: str
     description: str = None
     enabled: bool = False
+    # endpoint_type: int = 1
     properties: Union[WebhookAttributes, EmailAttributes] = None
     # For response model, do we need a "status / state" properties etc?
 
-
-class EndpointOut(Endpoint):
-    id: UUID
-    # endpoint_type: int # This has to be converted back to string..
-
-    properties: WebhookOut
-
-    class Config:
-        orm_mode = True
+    # class Config:
+    #     orm_mode = True
 
 
 class EndpointResponse(Endpoint):
-    # id: UUID
+    id: UUID
     # accountID: str  # This is DB only - not response / request model
-    # created: datetime
+    created: datetime
     # modified: datetime
-    # These we might need in the UI?
-    # last_delivery_status: datetime
-    # last_delivery_time: datetime
-    # last_failure_time: datetime
-    # auto_disabled etc? Tai vastavaa infoa.
+    # endpoint_type: int # This has to be converted back to string..
+    properties: Optional[WebhookOut]
 
     class Config:
         orm_mode = True
@@ -84,3 +76,23 @@ class Settings(BaseModel):
 
 class StatusReply(BaseModel):
     status: str
+
+
+class NotificationHistory(BaseModel):
+    account_id: str
+    endpoint_id: str
+    invocation_time: int = 0
+    invocation_result: bool = False
+    details: dict = None
+
+    class Config:
+        orm_mode = True
+        allow_population_by_field_name = True
+
+
+class NotificationHistoryOut(NotificationHistory):
+    id: str
+    created: datetime
+
+    class Config:
+        orm_mode = True

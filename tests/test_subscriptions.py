@@ -2,7 +2,7 @@ from .tools import create_identity_header, create_broken_identity_header
 
 
 def test_subscriptions(client):
-    headers = {'x-rh-identity': create_identity_header('test_account', '000001').decode()}
+    headers = {'x-rh-identity': create_identity_header('000001', 'test_account').decode()}
 
     response = client.put("/endpoints/email/subscription/policies-daily-mail", headers=headers)
     assert response.status_code == 204
@@ -14,9 +14,9 @@ def test_subscriptions(client):
     # Check the subscription status
     response = client.get("/endpoints/email/subscription/policies-daily-mail", headers=headers)
     assert response.status_code == 200
-    json = response.json()
-    assert json is not None
-    assert json['status'] == 'Subscribed'
+    json_payload = response.json()
+    assert json_payload is not None
+    assert json_payload['status'] == 'Subscribed'
 
     # Delete
     response = client.delete("/endpoints/email/subscription/policies-daily-mail", headers=headers)

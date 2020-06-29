@@ -49,6 +49,18 @@ async def test_with_instant_params():
     await engine.render('policies-instant-mail', notif_dict)
 
 
+@pytest.mark.asyncio
+async def test_with_japanese_characters():
+    engine: TemplateEngine = TemplateEngine()
+    tags = {'display_name': 'localhost'}
+    trigger_names = ['name Node 世丕且且世两上与丑万丣丕且丗丕 with no äöäöäöäöäÅå']
+    notification: Notification = Notification(tenantId='test', insightId='1', tags=tags, triggerNames=trigger_names)
+    notif_dict = notification.dict()
+    notif_dict['now'] = datetime.now()
+    await engine.render('policies-instant-mail', notif_dict)
+    # TODO Assert that it contains the mentioned characters
+
+
 def test_set_of_sets():
     list_of_sets = [{'a', 'b', 'c'}, {'a'}, {'b', 'c'}]
     clear_set = set_from_sets(list_of_sets)
