@@ -32,20 +32,32 @@ async def _get_subscribers(account_id: str, template_type: str) -> Set[str]:
     return receivers
 
 
-def aggregate(emails: List[EmailAggregation]) -> Dict[Any, dict]:
+def aggregate(emails: List[EmailAggregation]) -> (Dict[Any, dict], Dict[str, str]):
     aggregated = {}
+    name_mapping = {}
     for e in emails:
         if e.account_id not in aggregated:
             aggregated[e.account_id] = {}
 
         payload: Notification = Notification(**json.loads(e.payload))
-        for trigger in payload.triggerNames:
-            if trigger not in aggregated[e.account_id]:
-                aggregated[e.account_id][trigger] = set()
+        # Old
+        if len(payload.triggerNames) > 0:
+            for trigger in payload.triggerNames:
+                if trigger not in aggregated[e.account_id]:
+                    aggregated[e.account_id][trigger] = set()
 
-            aggregated[e.account_id][trigger].add(payload.insightId)
+                aggregated[e.account_id][trigger].add(payload.insightId)
+        else:
+            # New
+            for trigger, triggerName in payload.triggers.items():
+                if trigger not in aggregated[e.account_id]:
+                    print(trigger)
+                    aggregated[e.account_id][trigger] = set()
 
-    return aggregated
+                aggregated[e.account_id][trigger].add(payload.insightId)
+                name_mapping[trigger] = triggerName
+
+    return aggregated, name_mapping
 
 
 def policies_systems(policies_count, systems_count) -> Tuple[str, str]:
@@ -69,6 +81,8 @@ def daily_mail_topic(data: dict) -> str:
 
 def instant_mail_topic(data: Notification) -> str:
     policies_count = len(data.triggerNames)
+    if policies_count < 1:
+        policies_count = len(data.triggers)
     policies_str, _ = policies_systems(policies_count, 0)
 
     topic = '{} - {} {} triggered on {}'.format(datetimeformat(datetime.now()), policies_count, policies_str,
@@ -132,13 +146,13 @@ class EmailProcessor:
     async def process_aggregated(self, start_time: datetime, end_time: datetime):
         emails: List[EmailAggregation] = await email_store.fetch_emails(start_time, end_time)
 
-        aggregated_emails = aggregate(emails)
+        aggregated_emails, names = aggregate(emails)
 
         for account_aggregate in aggregated_emails.items():
             account_id = account_aggregate[0]
             policies = account_aggregate[1]
 
-            data: dict = {"trigger_stats": policies, 'start_time': start_time, 'end_time': end_time}
+            data: dict = {"trigger_stats": policies, 'start_time': start_time, 'end_time': end_time, 'triggerNames': names}
 
             await self._send_to_subscribers(account_id, self.DAILY_TEMPLATE_KEY, daily_mail_topic(data), data)
             await email_store.remove_aggregations(start_time, end_time, account_id)

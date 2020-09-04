@@ -23,7 +23,7 @@ async def test_process_topic(monkeypatch, client):
     monkeypatch.setattr(EmailProcessor, "_send_to_subscribers", mock_send_to_subscribers)
     email_process: EmailProcessor = EmailProcessor()
     notif = Notification(tenantId='a', insightId='b', tags={'display_name': 'localhost'},
-                         triggerNames=['trigger1', 'trigger2'])
+                         triggers={'1': 'trigger1', '2': 'trigger2'}, triggerNames=[])
     await email_process.process(notif)
 
 
