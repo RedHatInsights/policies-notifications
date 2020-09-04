@@ -52,7 +52,7 @@ class EmailSubscriptionConsumer:
                     if 'triggers' not in msg_dict:
                         msg_dict['triggers'] = {}
                     if 'triggerNames' not in msg_dict:
-                        msg_dict['triggerNames'] = {}
+                        msg_dict['triggerNames'] = []
 
                     notification: Notification = Notification(**msg_dict)
                     await self.processor.process(notification)
