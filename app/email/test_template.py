@@ -29,12 +29,14 @@ async def test_no_template_exception():
 @pytest.mark.asyncio
 async def test_with_aggregated_params():
     engine: TemplateEngine = TemplateEngine()
-    policies = {'Strict policy': {'a'}, 'Relaxed one': {'a', 'b'}}
+    trigger_names = {'1': 'Strict policy', '2': 'Relaxed one'}
+    policies = {'1': {'a'}, '2': {'a', 'b'}}
     now = datetime.now()
     today = date.today()
     today = datetime(today.year, today.month, today.day)
     yesterday = today - timedelta(days=1)
-    params: dict = {"trigger_stats": policies, 'start_time': yesterday, 'end_time': today, 'now': now}
+    params: dict = {"trigger_stats": policies, 'start_time': yesterday, 'end_time': today, 'now': now,
+                    'triggerNames': trigger_names}
     await engine.render('policies-daily-mail', params)
 
 
@@ -42,8 +44,8 @@ async def test_with_aggregated_params():
 async def test_with_instant_params():
     engine: TemplateEngine = TemplateEngine()
     tags = {'display_name': 'localhost'}
-    trigger_names = ['First policy', 'Second policy']
-    notification: Notification = Notification(tenantId='test', insightId='1', tags=tags, triggerNames=trigger_names)
+    triggers = {'1': 'First policy', '2': 'Second policy'}
+    notification: Notification = Notification(tenantId='test', insightId='1', tags=tags, triggerNames=[], triggers=triggers)
     notif_dict = notification.dict()
     notif_dict['now'] = datetime.now()
     await engine.render('policies-instant-mail', notif_dict)
@@ -53,8 +55,10 @@ async def test_with_instant_params():
 async def test_with_japanese_characters():
     engine: TemplateEngine = TemplateEngine()
     tags = {'display_name': 'localhost'}
-    trigger_names = ['name Node 世丕且且世两上与丑万丣丕且丗丕 with no äöäöäöäöäÅå']
-    notification: Notification = Notification(tenantId='test', insightId='1', tags=tags, triggerNames=trigger_names)
+    triggers = {'1': 'name Node 世丕且且世两上与丑万丣丕且丗丕 with no äöäöäöäöäÅå'}
+    trigger_names = []
+    notification: Notification = Notification(tenantId='test', insightId='1', tags=tags, triggerNames=trigger_names,
+                                              triggers=triggers)
     notif_dict = notification.dict()
     notif_dict['now'] = datetime.now()
     await engine.render('policies-instant-mail', notif_dict)

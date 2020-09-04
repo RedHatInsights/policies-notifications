@@ -14,7 +14,7 @@ pytest-aiohttp = "*"
 rope = "*"
 
 [packages]
-fastapi = "==0.54.1"
+fastapi = "==0.61.1"
 uvicorn = "*"
 aiohttp = {extras = ["speedups"],version = "*"}
 asyncpg = "*"

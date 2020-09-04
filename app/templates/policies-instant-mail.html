@@ -25,7 +25,7 @@
                                     <td bgcolor="#2c2c2" width="600" valign="top">
                                         <div width="100%" align="center"
                                             style="padding:20px 20px 20px 20px;color:#ffffff;font-size:18px;font-weight:bold">
-                                            Policies triggered - {{ now | datetimeformat }}
+                                            Policies triggered - {{ now | datetimeformat }}
                                         </div>
                                     </td>
                                 </tr>
@@ -35,10 +35,14 @@
                                         <table border="0" cellpadding="0" cellspacing="0" width="100%">
                                             <tbody>
                                                 <tr>
-                                                    {% set num_triggers = triggerNames | length %}
+                                                    {% if triggerNames | length > 0 %}
+                                                    {% set num_triggers = triggerNames | length %}
+                                                    {% else %}
+                                                    {% set num_triggers = triggers | length %}
+                                                    {% endif %}
                                                     <td bgcolor="ffffff" style="padding:20px 20px 20px 20px;font-size:16px">
                                                         Policy trigger notification for <strong>{{ tags.display_name }}</strong>.<br>
-                                                        System checked in at {{ now | datetimeformat }} and triggered {{ num_triggers }} {% if num_triggers == 1 %}policy{% else %}policies{% endif %}.
+                                                        System checked in at {{ now | datetimeformat }} and triggered {{ num_triggers }} {% if num_triggers == 1 %}policy{% else %}policies{% endif %}.
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -56,11 +60,19 @@
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                {% for item in triggerNames %}
-                                                                <tr style="font-size: 14px;">
-                                                                    <td style="padding:10px 10px;border: 1px solid #f5f5f5;">{{ item }}</td>
-                                                                </tr>
-                                                                {% endfor %}
+                                                                {% if triggers|length > 0 %}
+                                                                    {% for key, value in triggers.items() %}
+                                                                        <tr style="font-size: 14px;">
+                                                                            <td style="padding:10px 10px;border: 1px solid #f5f5f5;"><a href="https://cloud.redhat.com/insights/policies/policy/{{ key }}" target="_blank">{{ value }}</a></td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                {% else %}
+                                                                    {% for item in triggerNames %}
+                                                                    <tr style="font-size: 14px;">
+                                                                        <td style="padding:10px 10px;border: 1px solid #f5f5f5;">{{ item }}</td>
+                                                                    </tr>
+                                                                    {% endfor %}
+                                                                {% endif %}
                                                             </tbody>
                                                         </table>
                                                     </td>

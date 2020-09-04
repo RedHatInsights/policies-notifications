@@ -32,4 +32,5 @@ class Notification(BaseModel):
     tenantId: str
     insightId: str
     tags: Mapping[str, str]
-    triggerNames: List[str]
+    triggerNames: List[str]  # Need to maintain until all old data has been processed
+    triggers: Mapping[str, str]

@@ -47,7 +47,14 @@ class EmailSubscriptionConsumer:
         try:
             async for msg in self.consumer:
                 try:
-                    notification: Notification = Notification(**msg.value)
+                    msg_dict = msg.value
+                    # TODO Remove after all the old data has been processed
+                    if 'triggers' not in msg_dict:
+                        msg_dict['triggers'] = {}
+                    if 'triggerNames' not in msg_dict:
+                        msg_dict['triggerNames'] = {}
+
+                    notification: Notification = Notification(**msg_dict)
                     await self.processor.process(notification)
                     await self.consumer.commit()
                 except Exception as e:
