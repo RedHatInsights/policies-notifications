@@ -57,7 +57,8 @@ async def test_with_japanese_characters():
     tags = {'display_name': 'localhost'}
     triggers = {'1': 'name Node 世丕且且世两上与丑万丣丕且丗丕 with no äöäöäöäöäÅå'}
     trigger_names = []
-    notification: Notification = Notification(tenantId='test', insightId='1', tags=tags, triggerNames=trigger_names, triggers=triggers)
+    notification: Notification = Notification(tenantId='test', insightId='1', tags=tags, triggerNames=trigger_names,
+                                              triggers=triggers)
     notif_dict = notification.dict()
     notif_dict['now'] = datetime.now()
     await engine.render('policies-instant-mail', notif_dict)
