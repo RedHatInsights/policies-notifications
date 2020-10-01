@@ -1,6 +1,7 @@
 import json
 import asyncio
 import logging
+from typing import Mapping
 
 from aiokafka import AIOKafkaConsumer
 from prometheus_client import Counter
@@ -48,7 +49,12 @@ class EmailSubscriptionConsumer:
             async for msg in self.consumer:
                 try:
                     msg_dict = msg.value
-                    for k, v in msg_dict['tags']:
+                    if not isinstance(msg_dict['tags'], Mapping):
+                        msg_dict['tags'] = {}
+                        await self.consumer.commit()
+                        continue
+
+                    for k, v in msg_dict['tags'].iteritems():
                         if v is None or not isinstance(v, str):
                             msg_dict['tags'].pop(k, None)
 
