@@ -40,22 +40,13 @@ def aggregate(emails: List[EmailAggregation]) -> (Dict[Any, dict], Dict[str, str
             aggregated[e.account_id] = {}
 
         payload: Notification = Notification(**json.loads(e.payload))
-        # Old
-        if len(payload.triggerNames) > 0:
-            for trigger in payload.triggerNames:
-                if trigger not in aggregated[e.account_id]:
-                    aggregated[e.account_id][trigger] = set()
 
-                aggregated[e.account_id][trigger].add(payload.insightId)
-        else:
-            # New
-            for trigger, triggerName in payload.triggers.items():
-                if trigger not in aggregated[e.account_id]:
-                    print(trigger)
-                    aggregated[e.account_id][trigger] = set()
+        for trigger, triggerName in payload.triggers.items():
+            if trigger not in aggregated[e.account_id]:
+                aggregated[e.account_id][trigger] = set()
 
-                aggregated[e.account_id][trigger].add(payload.insightId)
-                name_mapping[trigger] = triggerName
+            aggregated[e.account_id][trigger].add(payload.insightId)
+            name_mapping[trigger] = triggerName
 
     return aggregated, name_mapping
 
@@ -80,9 +71,7 @@ def daily_mail_topic(data: dict) -> str:
 
 
 def instant_mail_topic(data: Notification) -> str:
-    policies_count = len(data.triggerNames)
-    if policies_count < 1:
-        policies_count = len(data.triggers)
+    policies_count = len(data.triggers)
     policies_str, _ = policies_systems(policies_count, 0)
 
     topic = '{} - {} {} triggered on {}'.format(datetimeformat(datetime.now()), policies_count, policies_str,

@@ -1,4 +1,4 @@
-from typing import Mapping, List
+from typing import Mapping
 
 from pydantic import BaseModel
 
@@ -32,5 +32,4 @@ class Notification(BaseModel):
     tenantId: str
     insightId: str
     tags: Mapping[str, str]
-    triggerNames: List[str]  # Need to maintain until all old data has been processed
     triggers: Mapping[str, str]

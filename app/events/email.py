@@ -1,7 +1,6 @@
 import json
 import asyncio
 import logging
-from typing import Mapping
 
 from aiokafka import AIOKafkaConsumer
 from prometheus_client import Counter

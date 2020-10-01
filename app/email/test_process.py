@@ -6,9 +6,9 @@ from ..events.models import Notification
 
 
 def test_aggregate_duplicate():
-    notif = Notification(tenantId='a', insightId='b', tags={}, triggerNames=[], triggers={'1': 'trigger1', '2': 'trigger2'})
+    notif = Notification(tenantId='a', insightId='b', tags={}, triggers={'1': 'trigger1', '2': 'trigger2'})
     # Assume trigger1 was fixed in the next report
-    notif2 = Notification(tenantId='a', insightId='b', tags={}, triggerNames=[], triggers={'2': 'trigger2'})
+    notif2 = Notification(tenantId='a', insightId='b', tags={}, triggers={'2': 'trigger2'})
 
     e = EmailAggregation()
     e.account_id = 'a'
@@ -29,8 +29,8 @@ def test_aggregate_duplicate():
 
 
 def test_aggregate_per_account():
-    notif = Notification(tenantId='a', insightId='b', tags={}, triggerNames=[], triggers={'1': 'trigger1', '2': 'trigger2'})
-    notif2 = Notification(tenantId='b', insightId='b', tags={}, triggerNames=[], triggers={'2': 'trigger2'})
+    notif = Notification(tenantId='a', insightId='b', tags={}, triggers={'1': 'trigger1', '2': 'trigger2'})
+    notif2 = Notification(tenantId='b', insightId='b', tags={}, triggers={'2': 'trigger2'})
 
     e = EmailAggregation()
     e.account_id = 'a'
@@ -50,12 +50,12 @@ def test_aggregate_per_account():
 
 
 def test_aggregate_per_system_count():
-    notif = Notification(tenantId='a', insightId='b', tags={}, triggerNames=[], triggers={'1': 'trigger1', '2': 'trigger2'})
-    notif2 = Notification(tenantId='a', insightId='b', tags={}, triggerNames=[], triggers={'2': 'trigger2'})
-    notif3 = Notification(tenantId='a', insightId='b', tags={}, triggerNames=[], triggers={'3': 'trigger3'})
-    notif4 = Notification(tenantId='a', insightId='b', tags={}, triggerNames=[], triggers={'4': 'trigger4'})
-    notif5 = Notification(tenantId='a', insightId='c', tags={}, triggerNames=[], triggers={'2': 'trigger2'})
-    notif6 = Notification(tenantId='a', insightId='c', tags={}, triggerNames=[], triggers={'3': 'trigger3', '2': 'trigger2'})
+    notif = Notification(tenantId='a', insightId='b', tags={}, triggers={'1': 'trigger1', '2': 'trigger2'})
+    notif2 = Notification(tenantId='a', insightId='b', tags={}, triggers={'2': 'trigger2'})
+    notif3 = Notification(tenantId='a', insightId='b', tags={}, triggers={'3': 'trigger3'})
+    notif4 = Notification(tenantId='a', insightId='b', tags={}, triggers={'4': 'trigger4'})
+    notif5 = Notification(tenantId='a', insightId='c', tags={}, triggers={'2': 'trigger2'})
+    notif6 = Notification(tenantId='a', insightId='c', tags={}, triggers={'3': 'trigger3', '2': 'trigger2'})
 
     notifs = [notif, notif2, notif3, notif4, notif5, notif6]
 

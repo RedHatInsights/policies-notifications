@@ -13,7 +13,7 @@ async def disable_test_mailing_with_japanese_characters():
     engine: TemplateEngine = TemplateEngine()
     tags = {'display_name': 'localhost'}
     trigger_names = {'12345': 'name Node 世丕且且世两上与丑万丣丕且丗丕 with no äöäöäöäöäÅå'}
-    msg = {'tenantId': 'test', 'insightId': '1', 'tags': tags, 'triggerNames': [], 'triggers': trigger_names}
+    msg = {'tenantId': 'test', 'insightId': '1', 'tags': tags, 'triggers': trigger_names}
     notification: Notification = Notification(**msg)
     # notification: Notification = Notification(tenantId='test', insightId='1', tags=tags, triggerNames=trigger_names)
     notif_dict = notification.dict()
@@ -28,13 +28,11 @@ async def disable_test_mailing_with_japanese_characters():
 async def disable_test_japanese_with_aggregated_params():
     engine: TemplateEngine = TemplateEngine()
     policies = {'name Node 世丕且且世两上与丑万丣丕且丗丕 with no äöäöäöäöäÅå': {'a'}, 'こんいちわ': {'a', 'b'}}
-    triggerNames = {}
     now = datetime.now()
     today = date.today()
     today = datetime(today.year, today.month, today.day)
     yesterday = today - timedelta(days=1)
-    params: dict = {"trigger_stats": policies, 'start_time': yesterday, 'end_time': today, 'now': now,
-                    'triggerNames': triggerNames}
+    params: dict = {"trigger_stats": policies, 'start_time': yesterday, 'end_time': today, 'now': now}
     rendered = await engine.render('policies-daily-mail', params)
     bop: BopSender = BopSender()
     await bop.send_email(daily_mail_topic(params), rendered, {'miburman@redhat.com'})
