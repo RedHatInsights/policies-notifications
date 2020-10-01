@@ -48,11 +48,9 @@ class EmailSubscriptionConsumer:
             async for msg in self.consumer:
                 try:
                     msg_dict = msg.value
-                    # TODO Remove after all the old data has been processed
-                    if 'triggers' not in msg_dict:
-                        msg_dict['triggers'] = {}
-                    if 'triggerNames' not in msg_dict:
-                        msg_dict['triggerNames'] = []
+                    for k, v in msg_dict['tags']:
+                        if v is None or not isinstance(v, str):
+                            msg_dict['tags'].pop(k, None)
 
                     notification: Notification = Notification(**msg_dict)
                     await self.processor.process(notification)
