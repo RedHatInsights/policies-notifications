@@ -54,7 +54,7 @@ class EmailSubscriptionConsumer:
                         await self.consumer.commit()
                         continue
 
-                    for k, v in msg_dict['tags'].iteritems():
+                    for k, v in msg_dict['tags'].items():
                         if v is None or not isinstance(v, str):
                             msg_dict['tags'].pop(k, None)
 
