@@ -35,3 +35,8 @@ async def get_subscribers(account_id: str, event_type: str):
                                                                           (EmailSubscription.event_type == event_type)) \
         .gino.all()
     return emails
+
+
+async def get_all_subscribers():
+    emails: List[EmailSubscription] = await EmailSubscription.query.gino.all()
+    return emails

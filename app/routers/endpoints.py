@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from starlette.status import HTTP_404_NOT_FOUND, HTTP_400_BAD_REQUEST
 
 from ..core.errors import InvalidInputException
-from ..models.endpoints import Endpoint, EndpointResponse, Settings, StatusReply
+from ..models.endpoints import Endpoint, EndpointResponse, Settings, StatusReply, EmailSubscriptionResponse
 from ..db import endpoints as endpoint_db, subscriptions as sub_db
 from ..db.schemas import EmailSubscription
 from .auth import Credentials, decode_identity_header
@@ -48,6 +48,13 @@ async def update_email_subscriptions(settings: Settings, identity: Credentials =
         elif settings.policies_daily_mail is True:
             await sub_db.add_email_subscription(identity.account_number, identity.username,
                                                 'policies-daily-mail')
+
+
+@endpoints.get("/endpoints/email/subscriptions", response_model=List[EmailSubscriptionResponse])
+async def get_email_subscriptions():
+    subscribers = await sub_db.get_all_subscribers()
+
+    return subscribers
 
 
 @endpoints.get("/endpoints/email/subscription/{event_type}", response_model=StatusReply)

@@ -74,6 +74,16 @@ class Settings(BaseModel):
     policies_instant_mail: bool = Field(None, alias='policies-instant-mail')
 
 
+class EmailSubscriptionResponse(BaseModel):
+    account_id: str
+    user_id: str
+    event_type: str
+
+    class Config:
+        orm_mode = True
+        allow_population_by_field_name = True
+
+
 class StatusReply(BaseModel):
     status: str
 
