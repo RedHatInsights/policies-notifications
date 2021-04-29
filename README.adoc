@@ -1,3 +1,5 @@
+/!\ This project is no longer used/developed/maintained
+
 == Installing python dependencies
 
 This project uses a Pipfile to lock all the dependencies, to setup you will need to install pipenv.
